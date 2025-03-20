@@ -1,10 +1,8 @@
-from rest_framework import viewsets, status, permissions
-from rest_framework.response import Response
+import requests
+from rest_framework import viewsets, permissions
 from .models import Assignment, Submission, Feedback
 from .serializers import AssignmentSerializer, SubmissionSerializer, FeedbackSerializer
 from .permissions import IsTeacher
-from .tasks import process_grading
-#import requests  # This will be used later to integrate with Google Cloud Vertex AI
 
 class AssignmentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsTeacher]
@@ -18,39 +16,39 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         submission = serializer.save()
-        process_grading(submission.id)
-        #self.trigger_grading(submission)
+        self.trigger_grading(submission)
     
     def trigger_grading(self, submission):
-        # Simulated grading response for testing
-        result = {
-            "score": 85.0,
-            "comments": "Good job! Your analysis is well-organized and insightful."
-        }
-        Feedback.objects.create(
-            submission=submission,
-            score=result.get("score"),
-            comments=result.get("comments")
-        )
-        # When integrating with Vertex AI, uncomment and update the code below:
-        """
-        vertex_ai_url = "https://your-vertex-ai-endpoint"  # Update with your actual current endpoint
+        # Replace with your actual Gemini API endpoint URL
+        gemini_api_url = "https://ai.google.dev/api/rest"
+        
+        # Build payload according to Gemini API's requirements
         payload = {
             "submission_id": submission.id,
             "content": submission.content,
+            # Include additional fields if required by the Gemini API.
         }
+        
+        # Set up headers for authentication and content type.
+        headers = {
+            "Authorization": "Bearer AIzaSyAthSl-_Ft0r4wJqHJEYKuPt9MCc-ux-IM",
+            "Content-Type": "application/json"
+        }
+        
         try:
-            response = requests.post(vertex_ai_url, json=payload)
+            response = requests.post(gemini_api_url, json=payload, headers=headers)
             if response.status_code == 200:
                 result = response.json()
+                # Update how you extract the score and feedback based on Gemini's response format.
                 Feedback.objects.create(
                     submission=submission,
                     score=result.get("score"),
                     comments=result.get("comments")
                 )
+            else:
+                print(f"Gemini API error: {response.status_code}, {response.text}")
         except Exception as e:
-            print(f"Error during grading: {e}")
-        """
+            print(f"Exception calling Gemini API: {e}")
 
 class FeedbackViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
