@@ -500,3 +500,60 @@ document.addEventListener('DOMContentLoaded', function() {
         showNotification('Welcome back to EduAssist AI! You have 24 assignments pending review.');
     }, 1000);
 });
+
+document.getElementById('upload-button').addEventListener('click', function () {
+    const fileInput = document.getElementById('file-upload');
+    const file = fileInput.files[0];
+
+    if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // Show loading state
+        const elementsToUpdate = ['content-knowledge-score', 'analysis-score', 'organization-score', 'suggested-grade', 'suggested-feedback'];
+        elementsToUpdate.forEach(id => document.getElementById(id).innerText = 'Analyzing...');
+
+        fetch('/ai/process_json/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.response) {
+                try {
+                    const responseText = data.response;
+
+                    // Improved regex patterns for grading details
+                    const contentKnowledgeScore = responseText.match(/Content Knowledge Score:\s*(\d+\/\d+)/i)?.[1] || 'N/A';
+                    const analysisScore = responseText.match(/Analysis Score:\s*(\d+\/\d+)/i)?.[1] || 'N/A';
+                    const organizationScore = responseText.match(/Organization Score:\s*(\d+\/\d+)/i)?.[1] || 'N/A';
+                    const suggestedGrade = responseText.match(/Suggested Grade:\s*([A-F][+-]?(?:\s*\(\d+%\))?)/i)?.[1] || 'N/A';
+
+                    // Display extracted grading scores
+                    document.getElementById('content-knowledge-score').innerText = contentKnowledgeScore;
+                    document.getElementById('analysis-score').innerText = analysisScore;
+                    document.getElementById('organization-score').innerText = organizationScore;
+                    document.getElementById('suggested-grade').innerText = suggestedGrade;
+
+                    // Improved feedback extraction
+                    const feedbackMatch = responseText.match(/Suggested Feedback:\n?\s*(.*?)(?=\n[A-Za-z ]+:|$)/is);
+                    const feedback = feedbackMatch && feedbackMatch[1].trim() ? feedbackMatch[1].trim() : 'No feedback provided.';
+                    document.getElementById('suggested-feedback').innerText = feedback;
+
+                } catch (error) {
+                    console.error('Error displaying AI response:', error);
+                    alert('Error displaying the AI response. Please try again.');
+                }
+            } else if (data.error) {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    } else {
+        alert('Please select a JSON file to upload.');
+    }
+});
+
+document.getElementById('approve-send').addEventListener('click', () => {
+    alert('Feedback Approved & Sent!');
+});

@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduAssist AI | Teacher's Assistant</title>
-    <link rel="stylesheet" href="../styles/index.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles/index.css' %}">
 </head>
 <body>
     <div class="app-container">
@@ -210,54 +211,36 @@
                         </div>
                         <div class="grading-panel">
                             <div class="ai-feedback">
+                                <div class="upload-section">
+                                    <label for="file-upload" class="upload-label">📁 Upload Assignment JSON File</label>
+                                    <input type="file" id="file-upload" name="file" accept=".json">
+                                    <button id="upload-button" class="btn btn-upload">Analyze</button>
+                                </div>
+                        
                                 <h3>AI Assessment <span class="ai-badge">AI</span></h3>
-                                <div class="rubric-scores">
-                                    <div class="rubric-item">
-                                        <span>Content Knowledge</span>
-                                        <div class="score-dots">
-                                            <span class="dot filled"></span>
-                                            <span class="dot filled"></span>
-                                            <span class="dot filled"></span>
-                                            <span class="dot"></span>
-                                            <span class="dot"></span>
-                                        </div>
+                        
+                                <div id="ai-assessment" class="assessment-display">
+                                    <!-- AI-generated grading will be displayed here -->
+                                    <div>
+                                        <strong>Content Knowledge Score:</strong> <span id="content-knowledge-score">Waiting for analysis...</span>
                                     </div>
-                                    <div class="rubric-item">
-                                        <span>Analysis</span>
-                                        <div class="score-dots">
-                                            <span class="dot filled"></span>
-                                            <span class="dot filled"></span>
-                                            <span class="dot filled"></span>
-                                            <span class="dot filled"></span>
-                                            <span class="dot"></span>
-                                        </div>
+                                    <div>
+                                        <strong>Analysis Score:</strong> <span id="analysis-score">Waiting for analysis...</span>
                                     </div>
-                                    <div class="rubric-item">
-                                        <span>Organization</span>
-                                        <div class="score-dots">
-                                            <span class="dot filled"></span>
-                                            <span class="dot filled"></span>
-                                            <span class="dot filled"></span>
-                                            <span class="dot filled"></span>
-                                            <span class="dot"></span>
-                                        </div>
+                                    <div>
+                                        <strong>Organization Score:</strong> <span id="organization-score">Waiting for analysis...</span>
+                                    </div>
+                                    <div>
+                                        <strong>Suggested Grade:</strong> <span id="suggested-grade">Waiting for analysis...</span>
+                                    </div>
+                                    <div>
+                                        <strong>Suggested Feedback:</strong>
+                                        <div id="suggested-feedback">Waiting for analysis...</div>
                                     </div>
                                 </div>
-                                <div class="suggested-grade">
-                                    <h4>Suggested Grade: <span>B+ (88%)</span></h4>
-                                </div>
-                                <div class="feedback-suggestions">
-                                    <h4>Suggested Feedback:</h4>
-                                    <ul>
-                                        <li>Strong understanding of basic ecosystem concepts</li>
-                                        <li>Good analysis of energy flow through trophic levels</li>
-                                        <li>Could improve by providing specific examples of symbiotic relationships</li>
-                                        <li>Consider discussing ecosystem resilience in more detail</li>
-                                    </ul>
-                                </div>
+                        
                                 <div class="feedback-actions">
-                                    <button class="btn btn-secondary">Edit Feedback</button>
-                                    <button class="btn btn-primary">Approve & Send</button>
+                                    <button class="btn btn-primary" id="approve-send"> Approve & Send</button>
                                 </div>
                             </div>
                         </div>
@@ -266,6 +249,6 @@
             </div>
         </main>
     </div>
-    <script src="../js/index.js"></script>
+    <script src="{% static 'js/index.js' %}"></script>
 </body>
 </html>

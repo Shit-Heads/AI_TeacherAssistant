@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('grading.urls')),
     path('api-token-auth/', drf_views.obtain_auth_token),
+    path('ai/', include('ai_grading.urls')),
 ]
