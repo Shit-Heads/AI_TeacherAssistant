@@ -40,7 +40,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'grading',
+<<<<<<< Updated upstream
     'ai_grading',
+=======
+    'submissions',
+    'assignments',
+>>>>>>> Stashed changes
 ]
 
 MIDDLEWARE = [
@@ -77,12 +82,7 @@ WSGI_APPLICATION = 'ai_teacher_assistant.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+DATABASES = {}
 
 
 # Password validation
@@ -120,9 +120,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
+<<<<<<< Updated upstream
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+=======
+STATICFILES_DIRS= [BASE_DIR / 'static']
+>>>>>>> Stashed changes
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

@@ -20,7 +20,11 @@ from rest_framework.authtoken import views as drf_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('grading.urls')),
+    #path('', include('grading.urls')),
     path('api-token-auth/', drf_views.obtain_auth_token),
+<<<<<<< Updated upstream
     path('ai/', include('ai_grading.urls')),
+=======
+    path('', include('submissions.urls')),
+>>>>>>> Stashed changes
 ]

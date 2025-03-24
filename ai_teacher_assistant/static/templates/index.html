@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduAssist AI | Teacher's Assistant</title>
+<<<<<<< Updated upstream
+=======
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles/index.css' %}">
+>>>>>>> Stashed changes
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     {% load static %}
     <link rel="stylesheet" href="{% static 'styles/index.css' %}">
@@ -19,6 +24,7 @@
             <ul class="nav-links">
                 <li class="active"><a href="#"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li><a href="#"><i class="fas fa-book"></i> Assignments</a></li>
+                <li><a href="{% url 'submissions' %}"><i class="fas fa-file-alt"></i> Submissions</a></li>
                 <li><a href="#"><i class="fas fa-users"></i> Students</a></li>
                 <li><a href="#"><i class="fas fa-chart-line"></i> Analytics</a></li>
                 <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
@@ -249,6 +255,10 @@
             </div>
         </main>
     </div>
+<<<<<<< Updated upstream
     <script src="{% static 'js/index.js' %}"></script>
+=======
+    <script src="{% static 'js/index.js' % }"></script>
+>>>>>>> Stashed changes
 </body>
 </html>
