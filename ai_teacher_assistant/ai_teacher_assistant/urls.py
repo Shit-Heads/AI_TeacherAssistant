@@ -22,9 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     #path('', include('grading.urls')),
     path('api-token-auth/', drf_views.obtain_auth_token),
-<<<<<<< Updated upstream
     path('ai/', include('ai_grading.urls')),
-=======
     path('', include('submissions.urls')),
->>>>>>> Stashed changes
 ]

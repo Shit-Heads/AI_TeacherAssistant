@@ -15,7 +15,7 @@ client = genai.Client(
 
 def upload_view(request):
     """Render the upload.html template"""
-    return render(request, '../static/templates/index.html')  
+    return render(request, '../static/templates/dashboard.html')  
 
 @csrf_exempt
 def process_json(request):

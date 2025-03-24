@@ -40,12 +40,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'grading',
-<<<<<<< Updated upstream
     'ai_grading',
-=======
     'submissions',
     'assignments',
->>>>>>> Stashed changes
 ]
 
 MIDDLEWARE = [
@@ -120,13 +117,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-<<<<<<< Updated upstream
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
-=======
-STATICFILES_DIRS= [BASE_DIR / 'static']
->>>>>>> Stashed changes
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
