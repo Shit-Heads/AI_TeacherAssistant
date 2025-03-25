@@ -7,6 +7,7 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'styles/dashboard.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
@@ -18,14 +19,16 @@
                 <h2>EduAssist<span>AI</span></h2>
             </div>
             <ul class="nav-links">
-                <li class="active"><a href="#"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="#"><i class="fas fa-book"></i> Assignments</a></li>
-                <li><a href="#"><i class="fas fa-file-alt"></i> Submissions</a></li>
-                <li><a href="#"><i class="fas fa-users"></i> Students</a></li>
-                <li><a href="#"><i class="fas fa-chart-line"></i> Analytics</a></li>
-                <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href=""><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href=""><i class="fas fa-book"></i> Assignments</a></li>
+                <li><a href=""><i class="fas fa-users"></i> Students</a></li>
+                <li><a href=""><i class="fas fa-chart-line"></i> Analytics</a></li>
+                <li><a href=""><i class="fas fa-cog"></i> Settings</a></li>
             </ul>
             <div class="user-profile">
+                <div class="avatar">
+                    <img src="https://via.placeholder.com/150" alt="User Avatar">
+                </div>
                 <div class="user-info">
                     <h4>Ms. Johnson</h4>
                     <p>Science Teacher</p>
@@ -34,7 +37,7 @@
         </nav>
 
         <!-- Main Content Area -->
-        <div>
+        <div class="main-content">
             <form method="POST" action="{% url 'submissions' %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="input-group">
@@ -43,7 +46,6 @@
                 </div>
             </form>
         </div>
-    </div>
-    <script src="{% static 'js/index.js' %}"></script>
+
 </body>
 </html>
