@@ -24,4 +24,5 @@ urlpatterns = [
     path('api-token-auth/', drf_views.obtain_auth_token),
     path('ai/', include('ai_grading.urls')),
     path('', include('submissions.urls')),
+    path('assignments/', include('assignments.urls')),
 ]

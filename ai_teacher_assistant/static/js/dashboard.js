@@ -501,6 +501,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 1000);
 });
 
+//ai_grading
 document.getElementById('upload-button').addEventListener('click', function () {
     const fileInput = document.getElementById('file-upload');
     const file = fileInput.files[0];
@@ -519,36 +520,29 @@ document.getElementById('upload-button').addEventListener('click', function () {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.response) {
-                try {
-                    const responseText = data.response;
-
-                    // Improved regex patterns for grading details
-                    const contentKnowledgeScore = responseText.match(/Content Knowledge Score:\s*(\d+\/\d+)/i)?.[1] || 'N/A';
-                    const analysisScore = responseText.match(/Analysis Score:\s*(\d+\/\d+)/i)?.[1] || 'N/A';
-                    const organizationScore = responseText.match(/Organization Score:\s*(\d+\/\d+)/i)?.[1] || 'N/A';
-                    const suggestedGrade = responseText.match(/Suggested Grade:\s*([A-F][+-]?(?:\s*\(\d+%\))?)/i)?.[1] || 'N/A';
-
-                    // Display extracted grading scores
-                    document.getElementById('content-knowledge-score').innerText = contentKnowledgeScore;
-                    document.getElementById('analysis-score').innerText = analysisScore;
-                    document.getElementById('organization-score').innerText = organizationScore;
-                    document.getElementById('suggested-grade').innerText = suggestedGrade;
-
-                    // Improved feedback extraction
-                    const feedbackMatch = responseText.match(/Suggested Feedback:\n?\s*(.*?)(?=\n[A-Za-z ]+:|$)/is);
-                    const feedback = feedbackMatch && feedbackMatch[1].trim() ? feedbackMatch[1].trim() : 'No feedback provided.';
-                    document.getElementById('suggested-feedback').innerText = feedback;
-
-                } catch (error) {
-                    console.error('Error displaying AI response:', error);
-                    alert('Error displaying the AI response. Please try again.');
-                }
-            } else if (data.error) {
+            if (data.error) {
                 alert('Error: ' + data.error);
+                console.error('AI Response Error:', data.raw_response || data.error);
+                return;
             }
+
+            console.log('AI Response:', data);  // Debugging: Log AI response
+
+            // Ensure JSON parsing is done correctly
+            const responseData = typeof data === 'string' ? JSON.parse(data) : data;
+
+            // Update UI with extracted data
+            document.getElementById('content-knowledge-score').innerText = responseData.content_knowledge_score || 'N/A';
+            document.getElementById('analysis-score').innerText = responseData.analysis_score || 'N/A';
+            document.getElementById('organization-score').innerText = responseData.organization_score || 'N/A';
+            document.getElementById('suggested-grade').innerText = responseData.suggested_grade || 'N/A';
+            document.getElementById('suggested-feedback').innerText = responseData.suggested_feedback || 'No feedback provided.';
+
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Fetch Error:', error);
+            alert('An error occurred. Please try again.');
+        });
     } else {
         alert('Please select a JSON file to upload.');
     }

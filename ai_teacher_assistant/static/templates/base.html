@@ -1,0 +1,63 @@
+{% load static %} 
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>{% block title %}EduAssist AI{% endblock %}</title> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+    
+    <!-- Global styles -->
+    <link rel="stylesheet" href="{% static 'styles/global.css' %}">
+    
+    {% block extra_css %}{% endblock %} 
+</head> 
+<body> 
+    <div class="app-container"> 
+        <!-- Sidebar Navigation --> 
+        <nav class="sidebar"> 
+            <div class="logo"> 
+                <i class="fas fa-graduation-cap"></i> 
+                <h2>EduAssist<span>AI</span></h2> 
+            </div> 
+            <ul class="nav-links"> 
+                <li class="{% if request.path == '/dashboard/' %}active{% endif %}"> 
+                    <a href="/dashboard/"><i class="fas fa-home"></i> Dashboard</a> 
+                </li> 
+                <li class="{% if request.path == '/assignments/' %}active{% endif %}"> 
+                    <a href="/assignments/"><i class="fas fa-book"></i> Assignments</a> 
+                </li> 
+                <li class="{% if request.path == '/submissions/' %}active{% endif %}"> 
+                    <a href="/submissions/"><i class="fas fa-file-alt"></i> Submissions</a> 
+                </li> 
+                <li class="{% if request.path == '/students/' %}active{% endif %}"> 
+                    <a href="/students/"><i class="fas fa-users"></i> Students</a> 
+                </li> 
+                <li class="{% if request.path == '/analytics/' %}active{% endif %}"> 
+                    <a href="/analytics/"><i class="fas fa-chart-line"></i> Analytics</a> 
+                </li> 
+                <li class="{% if request.path == '/settings/' %}active{% endif %}"> 
+                    <a href="/settings/"><i class="fas fa-cog"></i> Settings</a> 
+                </li> 
+            </ul> 
+            <div class="user-profile"> 
+                <div class="avatar"> 
+                    <img src="{{ user.profile_picture.url|default:'/api/placeholder/48/48' }}" alt="Teacher Profile"> 
+                </div> 
+                <div class="user-info"> 
+                    <h4>{{ user.first_name }} {{ user.last_name }}</h4> 
+                    <p>{{ user.role }}</p> 
+                </div> 
+            </div> 
+        </nav>
+
+        <!-- Main Content Area --> 
+        <main class="main-content"> 
+            {% block content %} {% endblock %} 
+        </main> 
+    </div>
+
+    {% block extra_js %}{% endblock %} 
+    <script src="{% static 'js/app.js' %}"></script> 
+</body> 
+</html>
