@@ -63,7 +63,7 @@ def register_view(request):
                         'email': new_user.email,
                         'role': 'student',  # default role
                     })
-                return redirect('student_dashboard')
+                return redirect('login')
         else:
             form = RegistrationForm()
         return render(request, 'authentication/register.html', {'form': form})
