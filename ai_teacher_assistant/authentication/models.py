@@ -1,4 +1,3 @@
-'''
 from django.db import models
 from django.contrib.auth.models import User
 from djongo import models as djongo_models
@@ -23,4 +22,3 @@ class UserProfile(models.Model):
     
     class Meta:
         db_table = 'user_profiles'
-'''
