@@ -37,12 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'rest_framework.authtoken',
     'grading',
     'ai_grading',
     'submissions',
     'assignments',
+    'authentication',
 ]
 
 MIDDLEWARE = [
@@ -79,8 +78,23 @@ WSGI_APPLICATION = 'ai_teacher_assistant.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {}
+DATABASES = {
+    'default': {
+        'ENGINE': 'djongo',
+        'NAME': 'ai_teacher_assistant_db',
+        'CLIENT': {
+            'host': 'mongodb://localhost:27017',
+            'username': '', # Add if needed
+            'password': '', # Add if needed
+            'authSource': 'admin', # Change if needed
+        }
+    }
+}
 
+AUTHENTICATION_BACKENDS = [
+    'authentication.auth_backend.MongoDBAuthBackend',  # Ensure this line is correct
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
