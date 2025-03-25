@@ -80,19 +80,12 @@ WSGI_APPLICATION = 'ai_teacher_assistant.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'ai_teacher_assistant_db',
-        'CLIENT': {
-            'host': 'mongodb://localhost:27017',
-            'username': '', # Add if needed
-            'password': '', # Add if needed
-            'authSource': 'admin', # Change if needed
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
 AUTHENTICATION_BACKENDS = [
-    'authentication.auth_backend.MongoDBAuthBackend',  # Ensure this line is correct
     'django.contrib.auth.backends.ModelBackend',
 ]
 
