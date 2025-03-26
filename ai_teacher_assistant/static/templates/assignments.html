@@ -20,8 +20,8 @@
                 <h2>EduAssist<span>AI</span></h2>
             </div>
             <ul class="nav-links">
-                <li><a href=""><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href=""><i class="fas fa-book"></i> Assignments</a></li>
+                <li><a href="{% url 'teachdash' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="{% url 'assignments_view' %}"><i class="fas fa-book"></i> Assignments</a></li>
                 <li><a href=""><i class="fas fa-users"></i> Students</a></li>
                 <li><a href=""><i class="fas fa-chart-line"></i> Analytics</a></li>
                 <li><a href=""><i class="fas fa-cog"></i> Settings</a></li>
@@ -179,7 +179,7 @@
     <script>
         async function fetchAndRenderAssignments() {
             try {
-                const response = await fetch("/assignments/get-assignments/");
+                const response = await fetch("/teachdash/assignments/get-assignments/");
                 const data = await response.json();
     
                 if (response.ok) {
@@ -231,7 +231,7 @@
                 };
     
                 try {
-                    const response = await fetch("/assignments/create-assignment/", {
+                    const response = await fetch("/teachdash/assignments/create-assignment/", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",

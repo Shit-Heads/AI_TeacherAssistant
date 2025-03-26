@@ -21,11 +21,11 @@
                 <h2>EduAssist<span>AI</span></h2> 
             </div> 
             <ul class="nav-links"> 
-                <li class="{% if request.path == '/dashboard/' %}active{% endif %}"> 
-                    <a href=""><i class="fas fa-home"></i> Dashboard</a> 
+                <li class="{% if request.path == '/teachdash/' %}active{% endif %}"> 
+                    <a href="{% url 'teachdash' %}"><i class="fas fa-home"></i> Dashboard</a> 
                 </li> 
                 <li class="{% if request.path == '/assignments/' %}active{% endif %}"> 
-                    <a href=""><i class="fas fa-book"></i> Assignments</a> 
+                    <a href="{% url 'assignments_view' %}"><i class="fas fa-book"></i> Assignments</a> 
                 </li> 
                 <li class="{% if request.path == '/students/' %}active{% endif %}"> 
                     <a href=""><i class="fas fa-users"></i> Students</a> 

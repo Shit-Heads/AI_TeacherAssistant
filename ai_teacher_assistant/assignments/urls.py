@@ -4,7 +4,7 @@ from .views import assignments_view, create_assignment, get_assignments, delete_
 urlpatterns = [
     path("", dashboard, name="teachdash"),
     path("assignments/", assignments_view, name="assignments_view"),
-    path("assignment/create-assignment/", create_assignment, name="create_assignment"),
-    path("assignment/get-assignments/", get_assignments, name="get_assignments"),
-    path("assignment/delete-assignment/<str:assignment_id>/", delete_assignment, name="delete_assignment"),
+    path("assignments/create-assignment/", create_assignment, name="create_assignment"),
+    path("assignments/get-assignments/", get_assignments, name="get_assignments"),
+    path("assignments/delete-assignment/<str:assignment_id>/", delete_assignment, name="delete_assignment"),
 ]
