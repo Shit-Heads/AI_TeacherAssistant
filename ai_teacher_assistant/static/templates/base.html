@@ -22,31 +22,28 @@
             </div> 
             <ul class="nav-links"> 
                 <li class="{% if request.path == '/dashboard/' %}active{% endif %}"> 
-                    <a href="/dashboard/"><i class="fas fa-home"></i> Dashboard</a> 
+                    <a href=""><i class="fas fa-home"></i> Dashboard</a> 
                 </li> 
                 <li class="{% if request.path == '/assignments/' %}active{% endif %}"> 
-                    <a href="/assignments/"><i class="fas fa-book"></i> Assignments</a> 
-                </li> 
-                <li class="{% if request.path == '/submissions/' %}active{% endif %}"> 
-                    <a href="/submissions/"><i class="fas fa-file-alt"></i> Submissions</a> 
+                    <a href=""><i class="fas fa-book"></i> Assignments</a> 
                 </li> 
                 <li class="{% if request.path == '/students/' %}active{% endif %}"> 
-                    <a href="/students/"><i class="fas fa-users"></i> Students</a> 
+                    <a href=""><i class="fas fa-users"></i> Students</a> 
                 </li> 
                 <li class="{% if request.path == '/analytics/' %}active{% endif %}"> 
-                    <a href="/analytics/"><i class="fas fa-chart-line"></i> Analytics</a> 
+                    <a href=""><i class="fas fa-chart-line"></i> Analytics</a> 
                 </li> 
                 <li class="{% if request.path == '/settings/' %}active{% endif %}"> 
-                    <a href="/settings/"><i class="fas fa-cog"></i> Settings</a> 
+                    <a href=""><i class="fas fa-cog"></i> Settings</a> 
                 </li> 
             </ul> 
             <div class="user-profile"> 
                 <div class="avatar"> 
-                    <img src="{{ user.profile_picture.url|default:'/api/placeholder/48/48' }}" alt="Teacher Profile"> 
+                    <img src="" alt="Teacher Profile"> 
                 </div> 
                 <div class="user-info"> 
-                    <h4>{{ user.first_name }} {{ user.last_name }}</h4> 
-                    <p>{{ user.role }}</p> 
+                    <h4>aa</h4> 
+                    <p>teacher</p> 
                 </div> 
             </div> 
         </nav>

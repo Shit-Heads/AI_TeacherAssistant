@@ -16,13 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.views.generic.base import RedirectView
+from rest_framework.authtoken import views as drf_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    #path('', include('grading.urls')),
+    path('api-token-auth/', drf_views.obtain_auth_token),
     path('ai/', include('ai_grading.urls')),
-    path('assignments/', include('assignments.urls')),
-    path('submissions/', include('submissions.urls')),
-    path('auth/', include('authentication.urls')),
-    path('', RedirectView.as_view(url='auth/login/', permanent=False)),
+    #path('', include('submissions.urls')),
+    path('', include('assignments.urls')),
 ]
