@@ -1,58 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduAssist AI | Teacher's Assistant</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'styles/dashboard.css' %}">
-</head>
-<body>
-    <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar">
-            <div class="logo">
-                <i class="fas fa-graduation-cap"></i>
-                <h2>EduAssist<span>AI</span></h2>
-            </div>
-            <ul class="nav-links">
-                <li class="active"><a href="#"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="#"><i class="fas fa-book"></i> Assignments</a></li>
-                <li><a href="{% url 'submissions' %}"><i class="fas fa-file-alt"></i> Submissions</a></li>
-                <li><a href="#"><i class="fas fa-users"></i> Students</a></li>
-                <li><a href="#"><i class="fas fa-chart-line"></i> Analytics</a></li>
-                <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
-            </ul>
-            <div class="user-profile">
-                <div class="avatar">
-                    <img src="https://via.placeholder.com/48" alt="Teacher Profile">
-                </div>
-                <div class="user-info">
-                    <h4>Ms. Johnson</h4>
-                    <p>Science Teacher</p>
-                </div>
-            </div>
-        </nav>
+{% extends 'templates/base.html' %}
+{% load static %}
 
-        <!-- Main Content Area -->
-        <main class="main-content">
+{% block title %}Dashboard | EduAssist AI{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'styles/dashboard.css' %}">
+{% endblock %}
+{% block content %}
+<div class="dashboard">
             <header class="top-bar">
                 <div class="search-container">
                     <i class="fas fa-search"></i>
                     <input type="text" placeholder="Search assignments, students...">
                 </div>
                 <div class="action-buttons">
-                    <button class="btn btn-outline"><i class="fas fa-bell"></i></button>
-                    <button class="btn btn-outline"><i class="fas fa-envelope"></i></button>
+                    <button class="btn btn-outline" title="button"><i class="fas fa-bell"></i></button>
+                    <button class="btn btn-outline" title="button"><i class="fas fa-envelope"></i></button>
                     <button class="btn btn-primary"><i class="fas fa-plus"></i> New Assignment</button>
                 </div>
             </header>
-
-            <div class="dashboard">
-                <h1>Welcome back, Ms. Johnson!</h1>
-                <p class="subtitle">Here's an overview of your teaching assistant activity</p>
-
+            <h1>Welcome back, {{ user.first_name }}!</h1>
+            <p class="subtitle">Here's an overview of your teaching assistant activity</p>
                 <!-- Stats Overview -->
                 <div class="stats-container">
                     <div class="stat-card">
@@ -198,7 +165,7 @@
                             <div class="submission-header">
                                 <h3>Biology: Ecosystem Analysis</h3>
                                 <div class="student-info">
-                                    <img src="https://via.placeholder.com/48" alt="Student Photo">
+                                    <img src="/api/placeholder/32/32" alt="Student Photo">
                                     <div>
                                         <h4>Emma Thompson</h4>
                                         <p>Grade 9-B • Submitted 2 hours ago</p>
@@ -248,8 +215,10 @@
                     </div>
                 </section>
             </div>
+            {% endblock %}
+
+            {% block extra_js %}
         </main>
     </div>
-    <script src="{% static 'js/dasboard.js' %}"></script>
-</body>
-</html>
+    <script src="{% static 'js/dashboard.js' %}"></script>
+    {% endblock %}
