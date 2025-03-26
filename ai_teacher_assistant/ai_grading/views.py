@@ -8,7 +8,7 @@ from google import genai
 from google.genai import types
 
 # Initialize Firebase
-cred = credentials.Certificate(r"C:\Users\gowth\Projects\recipe_data_django\AI_TeacherAssistant\ai_teacher_assistant\serviceAccountKey.json")  # Update with your file path
+cred = credentials.Certificate(r"D:\Programming Projects\AI_TeacherAssistant\ai_teacher_assistant\serviceAccountKey.json")  # Update with your file path
 firebase_admin.initialize_app(cred)
 db = firestore.client()  # Firestore database instance
 
