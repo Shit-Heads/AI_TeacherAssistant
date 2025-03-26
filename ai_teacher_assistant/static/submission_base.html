@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EduAssist AI | Teacher's Assistant{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles/dashboard.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h2>EduAssist<span>AI</span></h2>
+            </div>
+            <ul class="nav-links">
+                <li class="{% if request.path == '/submissions/' %}active{% endif %}"><a href="{% url 'submissions' %}"><i class="fas fa-home "></i> Dashboard</a></li>
+                <li class="{% if request.path == '/pending/' %}active{% endif %}"><a href="#"><i class="fas fa-file-alt"></i> Pending Assignments</a></li>
+                <li class="{% if request.path == '/submitted/' %}active{% endif %}"><a href="#"><i class="fas fa-book"></i> Submitted Assignments</a></li>
+            </ul>
+            <div class="user-profile">
+                <div class="avatar">
+                    <img src="https://via.placeholder.com/48" alt="Teacher Profile">
+                </div>
+                <div class="user-info">
+                    <h4>John Doe</h4>
+                    <p>Student</p>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search assignments">
+                </div>
+                <div class="action-buttons">
+                    <a class="btn btn-outline" href="{% url 'logout' %}"> Logout</a>
+                </div>
+            </header>
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

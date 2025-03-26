@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from .mongodb import save_to_mongodb
 from docx import Document
 import re
+from django.contrib.auth.decorators import login_required
+from .firebase_utils import AssignmentManager
 
 def submissions(request):
     print("submissions")
@@ -59,3 +61,54 @@ def pending_submissions(request):
 
 def submissions_home(request):
     return render(request, '../static/templates/submissions/submission_portal.html')
+
+@login_required
+def submissions_home(request):
+    assignment_manager = AssignmentManager()
+    
+    try:
+        # Fetch assignments (you can add filters if needed)
+        recent_assignments = assignment_manager.get_assignments()
+        pending_assignments = assignment_manager.get_pending_assignments()
+        
+        context = {
+            'recent_assignments': recent_assignments,
+            'pending_assignments': pending_assignments,
+            'total_assignments': len(recent_assignments),
+            'total_pending': len(pending_assignments)
+        }
+        
+        return render(request, '../static/templates/submissions/submission_portal.html', context)
+    
+    except Exception as e:
+        print(f"Error in submissions home view: {e}")
+        return render(request, '../static/templates/submissions/submission_portal.html', {
+            'recent_assignments': [],
+            'pending_assignments': [],
+            'total_assignments': 0,
+            'total_pending': 0,
+            'error': 'Unable to fetch assignments'
+        })
+
+@login_required
+def pending_submissions(request):
+    assignment_manager = AssignmentManager()
+    
+    try:
+        # You can add optional filtering by grade or subject
+        pending_assignments = assignment_manager.get_pending_assignments()
+        
+        context = {
+            'pending_assignments': pending_assignments,
+            'total_pending': len(pending_assignments)
+        }
+        
+        return render(request, '../static/templates/submissions/submission_pending.html', context)
+    
+    except Exception as e:
+        print(f"Error in pending submissions view: {e}")
+        return render(request, '../static/templates/submissions/submission_pending.html', {
+            'pending_assignments': [],
+            'total_pending': 0,
+            'error': 'Unable to fetch pending assignments'
+        })

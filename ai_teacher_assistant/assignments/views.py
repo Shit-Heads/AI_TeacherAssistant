@@ -2,23 +2,31 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.contrib.auth.decorators import login_required
 import firebase_admin
 from firebase_admin import credentials, firestore
 
 #  Initialize Firestore (Directly using Service Account Key)
-SERVICE_ACCOUNT_PATH = r"D:\Programming Projects\AI_TeacherAssistant\ai_teacher_assistant\serviceAccountKey.json"  # Change this to your actual path
-if not firebase_admin._apps:
-    cred = credentials.Certificate(SERVICE_ACCOUNT_PATH)
-    firebase_admin.initialize_app(cred)
+SERVICE_ACCOUNT_PATH = r"D:\Programming Projects\AI_TeacherAssistant\ai_teacher_assistant\bingusfirebase.json"  # Change this to your actual path
+
+# Check if the app is already initialized and delete it if necessary
+if firebase_admin._apps:
+    firebase_admin.delete_app(firebase_admin.get_app())
+
+cred = credentials.Certificate(SERVICE_ACCOUNT_PATH)
+firebase_admin.initialize_app(cred)
+
 
 db = firestore.client()
 
 #  Render the Assignments Page
+@login_required
 def assignments_view(request):
     return render(request, "../static/templates/assignments.html")  # Assuming this template is inside templates/
 
 #  Add Assignment to Firestore
 @csrf_exempt
+@login_required
 def create_assignment(request):
     if request.method == "POST":
         try:
@@ -32,6 +40,7 @@ def create_assignment(request):
             return JsonResponse({"error": str(e)}, status=400)
 
 #  Fetch Assignments from Firestore
+@login_required
 def get_assignments(request):
     try:
         assignments_ref = db.collection("assignments").stream()
@@ -42,6 +51,7 @@ def get_assignments(request):
 
 #  Delete Assignment from Firestore
 @csrf_exempt
+@login_required
 def delete_assignment(request, assignment_id):
     try:
         db.collection("assignments").document(assignment_id).delete()
@@ -49,5 +59,6 @@ def delete_assignment(request, assignment_id):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
 
+@login_required
 def dashboard(request):
     return render(request, '../static/templates/dashboard.html')
