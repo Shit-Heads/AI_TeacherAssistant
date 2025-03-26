@@ -1,105 +1,263 @@
-{% extends 'templates/base.html' %}
-{% load static %}
-
-{% block title %}Assignments | EduAssist AI{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'styles/assignments.css' %}">
-{% endblock %}
-
-{% block content %}
-<!-- Main Assignments Content -->
-<div class="assignments-content">
-    <header class="top-bar">
-        <h1>Assignments</h1>
-        <button id="new-assignment-btn" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Create New Assignment
-        </button>
-    </header>
-
-    <!-- Assignments Grid -->
-    <section class="assignments-grid">
-        <div class="assignments-list">
-            <!-- Existing Assignments Will Be Dynamically Populated -->
-            <div class="assignment-card">
-                <div class="assignment-header">
-                    <h3>Physics: Motion and Forces</h3>
-                    <span class="badge badge-primary">Grade 10</span>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduAssist AI | Teacher's Assistant</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/assignments.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h2>EduAssist<span>AI</span></h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href=""><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href=""><i class="fas fa-book"></i> Assignments</a></li>
+                <li><a href=""><i class="fas fa-users"></i> Students</a></li>
+                <li><a href=""><i class="fas fa-chart-line"></i> Analytics</a></li>
+                <li><a href=""><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+            <div class="user-profile">
+                <div class="avatar">
+                    <img src="https://via.placeholder.com/150" alt="User Avatar">
                 </div>
-                <div class="assignment-details">
-                    <p><i class="fas fa-calendar-alt"></i> Due: March 15, 2025</p>
-                    <p><i class="fas fa-user-graduate"></i> 28/32 Submitted</p>
-                </div>
-                <div class="assignment-actions">
-                    <button class="btn btn-secondary">View Details</button>
-                    <button class="btn btn-outline">Edit</button>
+                <div class="user-info">
+                    <h4>Ms. Johnson</h4>
+                    <p>Science Teacher</p>
                 </div>
             </div>
-            <div class="assignment-card">
-                <div class="assignment-header">
-                    <h3>Chemistry: Periodic Table Quiz</h3>
-                    <span class="badge badge-success">Grade 11</span>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="flex-1 p-6 overflow-y-auto">
+                <div class="flex items-center justify-between mb-6">
+                    <h1 class="text-2xl font-bold">Assignments</h1>
+                    <div class="flex items-center space-x-4">
+                        <input type="text" placeholder="Search assignments..." class="border rounded-md px-3 py-2 w-64">
+                        <button id="new-assignment-btn" class="bg-blue-500 text-white px-4 py-2 rounded-md">+ New Assignment</button>
+                    </div>
                 </div>
-                <div class="assignment-details">
-                    <p><i class="fas fa-calendar-alt"></i> Due: March 16, 2025</p>
-                    <p><i class="fas fa-user-graduate"></i> 26/26 Submitted</p>
-                </div>
-                <div class="assignment-actions">
-                    <button class="btn btn-secondary">View Details</button>
-                    <button class="btn btn-outline">Edit</button>
+
+                <div class="bg-white shadow-md rounded-lg">
+                    <!-- Subject Tabs -->
+                    <div class="border-b">
+                        <nav class="-mb-px flex" id="subject-tabs">
+                            <a href="#" data-subject="all" class="subject-tab active w-full text-center py-4 font-medium border-b-2 border-blue-500 text-blue-600">All Assignments</a>
+                            <a href="#" data-subject="biology" class="subject-tab w-full text-center py-4 font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">Biology</a>
+                            <a href="#" data-subject="chemistry" class="subject-tab w-full text-center py-4 font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">Chemistry</a>
+                            <a href="#" data-subject="physics" class="subject-tab w-full text-center py-4 font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">Physics</a>
+                        </nav>
+                    </div>
+
+                    <!-- Assignments Content -->
+                    <div id="assignments-content" class="p-6 mb-10">
+                        <!-- Assignments will be dynamically populated here -->
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
     <!-- New Assignment Modal -->
-    <div id="new-assignment-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h2>Create New Assignment</h2>
-            <form id="assignment-form">
-                <div class="form-group">
-                    <label for="subject">Subject</label>
-                    <select id="subject" required>
-                        <option value="">Select Subject</option>
-                        <option value="physics">Physics</option>
-                        <option value="chemistry">Chemistry</option>
+    <div id="new-assignment-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+            <form id="new-assignment-form" class="max-w-lg mx-auto bg-white shadow-2xl rounded-xl p-8 space-y-6 border border-gray-100">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Create New Assignment</h2>
+                    <p class="text-gray-500 text-sm">Fill out the details for your new assignment</p>
+                </div>
+            
+                <div class="mb-4">
+                    <label for="assignment-name" class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Assignment Name
+                    </label>
+                    <input 
+                        type="text" 
+                        id="assignment-name" 
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm py-2 px-3 transition duration-300 ease-in-out hover:border-indigo-300"
+                        placeholder="Enter assignment name"
+                        required
+                    >
+                </div>
+            
+                <div class="mb-4">
+                    <label for="assignment-subject" class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                        Subject
+                    </label>
+                    <select 
+                        id="assignment-subject" 
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm py-2 px-3 transition duration-300 ease-in-out hover:border-indigo-300"
+                        required
+                    >
+                        <option value="">Select a subject</option>
                         <option value="biology">Biology</option>
-                        <option value="mathematics">Mathematics</option>
+                        <option value="chemistry">Chemistry</option>
+                        <option value="physics">Physics</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="assignment-title">Assignment Title</label>
-                    <input type="text" id="assignment-title" placeholder="Enter assignment title" required>
+
+                <div class="mb-4">
+                    <label for="assignment-question" class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Question
+                    </label>
+                    <textarea 
+                        id="assignment-question" 
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm py-2 px-3 transition duration-300 ease-in-out hover:border-indigo-300"
+                        placeholder="Enter assignment question"
+                        required
+                    ></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="assignment-description">Assignment Description</label>
-                    <textarea id="assignment-description" placeholder="Describe the assignment" required></textarea>
+            
+                <div class="mb-4">
+                    <label for="assignment-grade" class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        Grade
+                    </label>
+                    <input 
+                        type="text" 
+                        id="assignment-grade" 
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm py-2 px-3 transition duration-300 ease-in-out hover:border-indigo-300"
+                        placeholder="Enter grade level"
+                    >
                 </div>
-                <div class="form-group">
-                    <label for="grade-level">Grade Level</label>
-                    <select id="grade-level" required>
-                        <option value="">Select Grade</option>
-                        <option value="9">Grade 9</option>
-                        <option value="10">Grade 10</option>
-                        <option value="11">Grade 11</option>
-                        <option value="12">Grade 12</option>
-                    </select>
+            
+                <div class="mb-4">
+                    <label for="assignment-due-date" class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Due Date
+                    </label>
+                    <input 
+                        type="date" 
+                        id="assignment-due-date" 
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm py-2 px-3 transition duration-300 ease-in-out hover:border-indigo-300"
+                        required
+                    >
                 </div>
-                <div class="form-group">
-                    <label for="due-date">Due Date</label>
-                    <input type="date" id="due-date" required>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary close-modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Create Assignment</button>
+            
+                <div class="flex justify-end space-x-4 pt-4">
+                    <button 
+                        type="button" 
+                        id="cancel-btn" 
+                        class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition duration-300 ease-in-out transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        type="submit" 
+                        class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition duration-300 ease-in-out transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                    >
+                        Add Assignment
+                    </button>
                 </div>
             </form>
         </div>
     </div>
-</div>
-{% endblock %}
 
-{% block extra_js %}
-<script src="{% static 'js/assignments.js' %}"></script>
-{% endblock %}
+    <script>
+        async function fetchAndRenderAssignments() {
+            try {
+                const response = await fetch("/assignments/get-assignments/");
+                const data = await response.json();
+    
+                if (response.ok) {
+                    const assignmentsContent = document.getElementById("assignments-content");
+                    const assignments = data.assignments;
+    
+                    // Clear the existing content
+                    assignmentsContent.innerHTML = "";
+    
+                    // Render each assignment
+                    assignments.forEach((assignment) => {
+                        const assignmentCard = `
+                            <div class="assignment-card mb-4 p-4 border rounded-lg shadow-md bg-white" data-id="${assignment.id}">
+                                <div class="assignment-details">
+                                    <h3 class="text-lg font-semibold">${assignment.name}</h3>
+                                    <p><strong>Subject:</strong> ${assignment.subject}</p>
+                                    <p><strong>Grade:</strong> ${assignment.grade}</p>
+                                    <p><strong>Due Date:</strong> ${assignment.due_date}</p>
+                                    <p><strong>Question:</strong> ${assignment.question}</p>
+                                </div>
+                            </div>
+                        `;
+                        assignmentsContent.innerHTML += assignmentCard;
+                    });
+                } else {
+                    alert(data.error || "Failed to fetch assignments.");
+                }
+            } catch (error) {
+                console.error("Error fetching assignments:", error);
+            }
+        }
+    
+        document.addEventListener("DOMContentLoaded", () => {
+            const newAssignmentButton = document.getElementById("new-assignment-btn");
+            const newAssignmentModal = document.getElementById("new-assignment-modal");
+            const newAssignmentForm = document.getElementById("new-assignment-form");
+            const cancelBtn = document.getElementById("cancel-btn");
+    
+            // ✅ Handle New Assignment Form Submission
+            newAssignmentForm.addEventListener("submit", async (event) => {
+                event.preventDefault(); // Prevent default form submission
+    
+                const formData = {
+                    name: document.getElementById("assignment-name").value,
+                    subject: document.getElementById("assignment-subject").value,
+                    question: document.getElementById("assignment-question").value,
+                    grade: document.getElementById("assignment-grade").value,
+                    due_date: document.getElementById("assignment-due-date").value,
+                };
+    
+                try {
+                    const response = await fetch("/assignments/create-assignment/", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(formData),
+                    });
+    
+                    const result = await response.json();
+                    alert(result.message || result.error);
+    
+                    if (response.ok) {
+                        fetchAndRenderAssignments(); // Refresh the assignments list
+                        newAssignmentModal.classList.add("hidden"); // Close the modal
+                    }
+                } catch (error) {
+                    console.error("Error adding assignment:", error);
+                }
+            });
+    
+            // ✅ Open and Close Modal
+            newAssignmentButton.addEventListener("click", () => newAssignmentModal.classList.remove("hidden"));
+            cancelBtn.addEventListener("click", () => newAssignmentModal.classList.add("hidden"));
+    
+            // ✅ Fetch assignments on page load
+            fetchAndRenderAssignments();
+        });
+    </script>
+</body>
+</html>
