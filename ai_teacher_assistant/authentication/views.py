@@ -68,7 +68,7 @@ def profile_view(request):
 @login_required
 @role_required('teacher', 'admin')
 def teacher_dashboard(request):
-    return render(request, 'authentication/teacher_dashboard.html')
+    return render(request, 'templates/dashboard.html')
 
 @login_required
 @role_required('student')

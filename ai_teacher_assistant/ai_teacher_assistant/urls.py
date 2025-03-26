@@ -21,7 +21,7 @@ from django.views.generic.base import RedirectView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('ai/', include('ai_grading.urls')),
-    path('assignments/', include('assignments.urls')),
+    # path('assignments/', include('assignments.urls')),
     path('submissions/', include('submissions.urls')),
     path('auth/', include('authentication.urls')),
     path('', RedirectView.as_view(url='auth/login/', permanent=False)),
