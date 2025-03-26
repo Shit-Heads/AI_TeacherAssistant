@@ -54,5 +54,8 @@ def submissions(request):
         return HttpResponse('File uploaded successfully')
     return render(request, '../static/templates/submissions.html')
 
-def dashboard(request): 
-    return render(request,'../static/templates/index.html')
+def pending_submissions(request):
+    return render(request, '../static/templates/submissions/submission.html')
+
+def submissions_home(request):
+    return render(request, '../static/templates/submissions/submission_portal.html')

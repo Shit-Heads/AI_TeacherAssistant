@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import assignments_view
+from .views import assignments_view, dashbaord
 
 urlpatterns = [
-    path('', assignments_view, name='assignments_view'),  # Ensure this exists
+    path('', dashbaord, name='assignments'),  # Ensure this exists
 ]
