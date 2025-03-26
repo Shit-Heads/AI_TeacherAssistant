@@ -4,14 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduAssist AI | Teacher's Assistant</title>
-<<<<<<< Updated upstream
-=======
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'styles/index.css' %}">
->>>>>>> Stashed changes
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     {% load static %}
-    <link rel="stylesheet" href="{% static 'styles/index.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/dashboard.css' %}">
 </head>
 <body>
     <div class="app-container">
@@ -22,7 +17,7 @@
                 <h2>EduAssist<span>AI</span></h2>
             </div>
             <ul class="nav-links">
-                <li class="active"><a href="#"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="#"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li><a href="#"><i class="fas fa-book"></i> Assignments</a></li>
                 <li><a href="{% url 'submissions' %}"><i class="fas fa-file-alt"></i> Submissions</a></li>
                 <li><a href="#"><i class="fas fa-users"></i> Students</a></li>
@@ -31,7 +26,7 @@
             </ul>
             <div class="user-profile">
                 <div class="avatar">
-                    <img src="/api/placeholder/48/48" alt="Teacher Profile">
+                    <img src="https://via.placeholder.com/48" alt="Teacher Profile">
                 </div>
                 <div class="user-info">
                     <h4>Ms. Johnson</h4>
@@ -48,8 +43,8 @@
                     <input type="text" placeholder="Search assignments, students...">
                 </div>
                 <div class="action-buttons">
-                    <button class="btn btn-outline"><i class="fas fa-bell"></i></button>
-                    <button class="btn btn-outline"><i class="fas fa-envelope"></i></button>
+                    <button class="btn btn-outline" title="button"><i class="fas fa-bell"></i></button>
+                    <button class="btn btn-outline" title="button"><i class="fas fa-envelope"></i></button>
                     <button class="btn btn-primary"><i class="fas fa-plus"></i> New Assignment</button>
                 </div>
             </header>
@@ -203,7 +198,7 @@
                             <div class="submission-header">
                                 <h3>Biology: Ecosystem Analysis</h3>
                                 <div class="student-info">
-                                    <img src="/api/placeholder/32/32" alt="Student Photo">
+                                    <img src="https://via.placeholder.com/48" alt="Student Photo">
                                     <div>
                                         <h4>Emma Thompson</h4>
                                         <p>Grade 9-B • Submitted 2 hours ago</p>
@@ -255,10 +250,5 @@
             </div>
         </main>
     </div>
-<<<<<<< Updated upstream
-    <script src="{% static 'js/index.js' %}"></script>
-=======
-    <script src="{% static 'js/index.js' % }"></script>
->>>>>>> Stashed changes
 </body>
 </html>

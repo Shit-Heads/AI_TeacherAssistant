@@ -20,19 +20,27 @@ function initApp() {
 }
 
 function setupNavigation() {
-    const navLinks = document.querySelectorAll('.nav-links li');
-    
+    const navLinks = document.querySelectorAll('.nav-links li a');
+
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
-            e.preventDefault();
-            // Remove active class from all links
-            navLinks.forEach(l => l.classList.remove('active'));
-            // Add active class to clicked link
-            this.classList.add('active');
-            
-            // Here you would typically load the appropriate content
-            // For demo purposes, we'll just console log
-            console.log('Navigated to:', this.querySelector('a').textContent.trim());
+            const href = this.getAttribute('href');
+
+            if (href === '#') {
+                e.preventDefault();
+                navLinks.forEach(l => l.parentElement.classList.remove('active'));
+                this.parentElement.classList.add('active');
+
+                // Here you would typically load the appropriate content
+                // For demo purposes, we'll just console log
+                console.log('Navigated to:', this.textContent.trim());
+            } else {
+                // Allow default behavior for valid href
+                navLinks.forEach(l => l.parentElement.classList.remove('active'));
+                this.parentElement.classList.add('active');
+                // Navigate to the URL
+                window.location.href = href;
+            }
         });
     });
 }
