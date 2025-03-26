@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EduAssist AI | Submitted Assignments{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles/dashboard.css' %}">
+    <style>
+        /* Reuse styles from submission_pending.html and add any specific styles for submitted assignments */
+        .submitted-assignments-section .assignment-card {
+            background-color: #f0f6ff;
+            border-left: 4px solid #007bff;
+        }
+
+        .submission-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .submission-status-submitted {
+            background-color: #e6f3e6;
+            color: #28a745;
+        }
+
+        /* Modal Styles */
+        .submission-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+        }
+
+        .submission-details {
+            margin-bottom: 20px;
+        }
+
+        .submission-details h3 {
+            margin-bottom: 10px;
+            color: #333;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        .submission-details .detail-item {
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .submission-details .detail-item p {
+            margin: 5px 0;
+        }
+
+        .submission-details .detail-item .question {
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .submission-details .detail-item .answer {
+            color: #333;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h2>EduAssist<span>AI</span></h2>
+            </div>
+            <ul class="nav-links">
+                <li class="{% if request.path == '/submissions/' %}active{% endif %}"><a href="{% url 'submissions' %}"><i class="fas fa-home "></i> Dashboard</a></li>
+                <li><a href="{% url 'pending_submissions' %}"><i class="fas fa-file-alt"></i> Pending Assignments</a></li>
+                <li class="{% if request.path == '/submissions/submitted/' %}active{% endif %}"><a href="{% url 'submitted_assignments' %}"><i class="fas fa-file-alt"></i> Submitted Assignments</a></li>
+            </ul>
+            <div class="user-profile">
+                <div class="avatar">
+                    <img src="https://via.placeholder.com/48" alt="Teacher Profile">
+                </div>
+                <div class="user-info">
+                    <h4>{{ user.username }}</h4>
+                    <p>Student</p>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search submitted assignments">
+                </div>
+                <div class="action-buttons">
+                    <a class="btn btn-outline" href="{% url 'logout' %}"> Logout</a>
+                </div>
+            </header>
+
+            <div class="dashboard">
+                <!-- Submitted Assignments Section -->
+                <section class="submitted-assignments-section">
+                    <div class="section-header">
+                        <h2>Submitted Assignments</h2>
+                        <p>Total Submitted: {{ total_submitted }}</p>
+                    </div>
+                    <div class="assignments-list">
+                        {% for assignment in submitted_assignments %}
+                        <div class="assignment-card" data-assignment-id="{{ assignment.id }}">
+                            <div class="assignment-info">
+                                <h3>{{ assignment.name }}</h3>
+                                <p>{{ assignment.subject }} • Grade {{ assignment.grade }} • Submitted {{ assignment.submitted_at|date:"F d, Y" }}</p>
+                                <div class="assignment-meta">
+                                    <span><i class="fas fa-book"></i> {{ assignment.subject }}</span>
+                                    <span><i class="fas fa-calendar"></i> Due {{ assignment.formatted_due_date }}</span>
+                                    <span class="submission-status submission-status-submitted">
+                                        <i class="fas fa-check-circle"></i> Submitted
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="assignment-actions">
+                                <a href="#" class="btn btn-secondary view-details-btn"
+                                   data-assignment-id="{{ assignment.id }}"
+                                   data-assignment-name="{{ assignment.name }}"
+                                   data-assignment-subject="{{ assignment.subject }}"
+                                   data-assignment-grade="{{ assignment.grade }}"
+                                   data-submitted-date="{{ assignment.submitted_at|date:'F d, Y' }}"
+                                   onclick="openSubmissionDetailsModal(this)">View Details</a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p>No submitted assignments found.</p>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                {% if error %}
+                <div class="error-message">
+                    <p>{{ error }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Submission Details Modal -->
+    <div id="submissionDetailsModal" class="submission-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalAssignmentTitle">Submission Details</h2>
+                <button class="modal-close" onclick="closeSubmissionDetailsModal()">&times;</button>
+            </div>
+
+            <div class="submission-details">
+                <div class="detail-item">
+                    <p><strong>Subject:</strong> <span id="modalAssignmentSubject"></span></p>
+                    <p><strong>Grade:</strong> <span id="modalAssignmentGrade"></span></p>
+                    <p><strong>Submitted Date:</strong> <span id="modalSubmittedDate"></span></p>
+                </div>
+
+                <div id="submissionContentContainer">
+                    <!-- Submission content will be dynamically populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fetch submissions for the modal
+        async function fetchSubmissionDetails(assignmentId) {
+            try {
+                const response = await fetch(`/get_submission_details/${assignmentId}/`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch submission details');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error:', error);
+                return null;
+            }
+        }
+
+        // Populate submission details modal
+        async function openSubmissionDetailsModal(button) {
+            const modal = document.getElementById('submissionDetailsModal');
+            const assignmentId = button.getAttribute('data-assignment-id');
+            const assignmentName = button.getAttribute('data-assignment-name');
+            const assignmentSubject = button.getAttribute('data-assignment-subject');
+            const assignmentGrade = button.getAttribute('data-assignment-grade');
+            const submittedDate = button.getAttribute('data-submitted-date');
+
+            // Set basic assignment details in modal
+            document.getElementById('modalAssignmentTitle').textContent = assignmentName;
+            document.getElementById('modalAssignmentSubject').textContent = assignmentSubject;
+            document.getElementById('modalAssignmentGrade').textContent = assignmentGrade;
+            document.getElementById('modalSubmittedDate').textContent = submittedDate;
+
+            // Fetch and populate submission content
+            const submissionDetails = await fetchSubmissionDetails(assignmentId);
+            const contentContainer = document.getElementById('submissionContentContainer');
+            
+            if (submissionDetails && submissionDetails.submissions) {
+                // Clear previous content
+                contentContainer.innerHTML = '';
+
+                // Populate submissions
+                submissionDetails.submissions.forEach((submission, index) => {
+                    const submissionDiv = document.createElement('div');
+                    submissionDiv.classList.add('detail-item');
+                    submissionDiv.innerHTML = `
+                        <h3>Submission ${index + 1}</h3>
+                        <p class="question">Question: ${submission.assignment || 'N/A'}</p>
+                        <p class="answer">Answer: ${submission.content || 'No answer provided'}</p>
+                    `;
+                    contentContainer.appendChild(submissionDiv);
+                });
+            } else {
+                contentContainer.innerHTML = '<p>No submission details available.</p>';
+            }
+
+            // Show modal
+            modal.style.display = 'flex';
+        }
+
+        function closeSubmissionDetailsModal() {
+            document.getElementById('submissionDetailsModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

@@ -5,11 +5,16 @@ from docx import Document
 import re
 from django.contrib.auth.decorators import login_required
 from .firebase_utils import AssignmentManager
+from django.http import JsonResponse
 
 def submissions(request):
     print("submissions")
     if request.method == 'POST' and request.FILES['file']:
         uploaded_file = request.FILES['file']
+
+        assignment_id = request.session.get('current_assignment_id') or request.POST.get('assignment_id')
+        if not assignment_id:
+            return HttpResponse('No assignment selected', status=400)
         
         # Check if the uploaded file is a .docx file
         if not uploaded_file.name.endswith('.docx'):
@@ -26,6 +31,7 @@ def submissions(request):
         print(f"File content: {file_content[:100]}...")  # Log the first 100 characters of the file content
         
         # Parse the content
+
         try:
             name_match = re.search(r'Name:\s*(.*)', file_content)
             class_match = re.search(r'Class:\s*(.*)', file_content)
@@ -49,15 +55,74 @@ def submissions(request):
         except Exception as e:
             print(f"Error parsing content: {e}")
             return HttpResponse('Failed to parse content in .docx file', status=400)
-        
-        # Save to MongoDB
-        save_to_mongodb(name, class_name, questions_answers,sub)
-        
-        return HttpResponse('File uploaded successfully')
-    return render(request, '../static/templates/submissions.html')
 
-def pending_submissions(request):
-    return render(request, '../static/templates/submissions/submission.html')
+        # Save to Firebase
+        assignment_manager = AssignmentManager()
+        if assignment_manager.save_submission(name, class_name, questions_answers, sub, assignment_id, username=request.user.username):
+            return HttpResponse('File uploaded successfully')
+        else:
+            return HttpResponse('Failed to save submission', status=500)
+    
+    return render(request, '../static/templates/submissions/submission_portal.html')
+
+def submissions_backup(request):
+    print("submissions")
+    if request.method == 'POST' and request.FILES['file']:
+        # Check if user is authenticated
+        if not request.user.is_authenticated:
+            return HttpResponse('User not authenticated', status=401)
+        
+        # Check if assignment_id is in the session or POST data
+        assignment_id = request.session.get('current_assignment_id') or request.POST.get('assignment_id')
+        if not assignment_id:
+            return HttpResponse('No assignment selected', status=400)
+        
+        uploaded_file = request.FILES['file']
+        
+        # Check if the uploaded file is a .docx file
+        if not uploaded_file.name.endswith('.docx'):
+            return HttpResponse('Invalid file type. Please upload a .docx file.', status=400)
+        
+        # Read the .docx file
+        try:
+            document = Document(uploaded_file)
+            file_content = "\n".join([para.text for para in document.paragraphs])
+        except Exception as e:
+            print(f"Error reading .docx file: {e}")
+            return HttpResponse('Failed to read .docx file', status=400)
+        
+        # Parse the answers from the document
+        try:
+            # Find all Answer sections
+            qa_matches = re.findall(r'Answer:\s*(.*?)(?=\s*Question:|\s*$)', file_content, re.DOTALL)
+            
+            if not qa_matches:
+                return HttpResponse('No answers found in the document', status=400)
+            
+            # Prepare questions_answers list with just answers
+            questions_answers = [
+                {
+                    'answer': answer.strip()
+                } for answer in qa_matches
+            ]
+            
+            print("data extracted")
+        except Exception as e:
+            print(f"Error parsing content: {e}")
+            return HttpResponse('Failed to parse content in .docx file', status=400)
+        
+        # Save to Firebase
+        assignment_manager = AssignmentManager()
+        if assignment_manager.save_submission(
+            username=request.user.username, 
+            assignment_id=assignment_id, 
+            questions_answers=questions_answers
+        ):
+            return HttpResponse('File uploaded successfully')
+        else:
+            return HttpResponse('Failed to save submission', status=500)
+    
+    return render(request, '../static/templates/submissions/submission_portal.html')
 
 def submissions_home(request):
     return render(request, '../static/templates/submissions/submission_portal.html')
@@ -112,3 +177,41 @@ def pending_submissions(request):
             'total_pending': 0,
             'error': 'Unable to fetch pending assignments'
         })
+    
+@login_required
+def submitted_assignments(request):
+    assignment_manager = AssignmentManager()
+    
+    try:
+        # Fetch submitted assignments (you can add filters if needed)
+        submitted_assignments = assignment_manager.get_submitted_assignments()
+        
+        context = {
+            'submitted_assignments': submitted_assignments,
+            'total_submitted': len(submitted_assignments)
+        }
+        
+        return render(request, '../static/templates/submissions/submission_submitted.html', context)
+    
+    except Exception as e:
+        print(f"Error in submitted assignments view: {e}")
+        return render(request, '../static/templates/submissions/submission_submitted.html', {
+            'submitted_assignments': [],
+            'total_submitted': 0,
+            'error': 'Unable to fetch submitted assignments'
+        })
+
+@login_required
+def get_submission_details(request, assignment_id):
+    assignment_manager = AssignmentManager()
+    
+    try:
+        # Fetch submissions for this specific assignment
+        submissions = assignment_manager.get_submission_details(assignment_id)
+        
+        return JsonResponse({
+            'submissions': submissions
+        })
+    except Exception as e:
+        print(f"Error fetching submission details: {e}")
+        return JsonResponse({'error': 'Unable to fetch submission details'}, status=500)
