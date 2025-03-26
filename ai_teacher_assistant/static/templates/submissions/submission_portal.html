@@ -17,9 +17,9 @@
                 <h2>EduAssist<span>AI</span></h2>
             </div>
             <ul class="nav-links">
-                <li><a href="{% url 'submissions' %}"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="#"><i class="fas fa-file-alt"></i> Pending Assignments</a></li>
-                <li><a href="#"><i class="fas fa-book"></i> Submitted Assignments</a></li>
+                <li class="{% if request.path == '/submissions/' %}active{% endif %}"><a href="{% url 'submissions' %}"><i class="fas fa-home "></i> Dashboard</a></li>
+                <li class="{% if request.path == '/pending/' %}active{% endif %}"><a href="#"><i class="fas fa-file-alt"></i> Pending Assignments</a></li>
+                <li class="{% if request.path == '/submitted/' %}active{% endif %}"><a href="#"><i class="fas fa-book"></i> Submitted Assignments</a></li>
             </ul>
             <div class="user-profile">
                 <div class="avatar">
@@ -38,6 +38,9 @@
                 <div class="search-container">
                     <i class="fas fa-search"></i>
                     <input type="text" placeholder="Search assignments">
+                </div>
+                <div class="action-buttons">
+                    <a class="btn btn-outline" href="{% url 'logout' %}"> Logout</a>
                 </div>
                 <!-- <div class="action-buttons">
                     <button class="btn btn-outline" title="button"><i class="fas fa-bell"></i></button>
