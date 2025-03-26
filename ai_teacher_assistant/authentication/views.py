@@ -18,7 +18,7 @@ def login_view(request):
                 try:
                     profile = UserProfile.objects.get(user_id=str(user.id))
                     if profile.role == 'teacher':
-                        return redirect('assignments')
+                        return redirect('teachdash')
                     elif profile.role == 'admin':
                         return redirect('dashboard')
                     elif profile.role == 'student':
@@ -43,7 +43,7 @@ def register_view(request):
             try:
                 profile = UserProfile.objects.get(user_id=str(user.id))
                 if profile.role == 'teacher':
-                    return redirect('assignments')
+                    return redirect('teachdash')
                 elif profile.role == 'admin':
                     return redirect('dashboard')
                 elif profile.role == 'student':

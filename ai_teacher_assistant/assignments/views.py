@@ -48,3 +48,6 @@ def delete_assignment(request, assignment_id):
         return JsonResponse({"message": "Assignment deleted successfully!"}, status=200)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+
+def dashboard(request):
+    return render(request, '../static/templates/dashboard.html')
