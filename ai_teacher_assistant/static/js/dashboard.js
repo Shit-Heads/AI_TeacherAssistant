@@ -519,7 +519,14 @@ document.getElementById('upload-button').addEventListener('click', function () {
         formData.append('file', file);
 
         // Show loading state
-        const elementsToUpdate = ['content-knowledge-score', 'analysis-score', 'organization-score', 'suggested-grade', 'suggested-feedback'];
+        const elementsToUpdate = [
+            'content-knowledge-score',
+            'analysis-score',
+            'organization-score',
+            'plagiarism-percentage',
+            'suggested-grade',
+            'suggested-feedback'
+        ];
         elementsToUpdate.forEach(id => document.getElementById(id).innerText = 'Analyzing...');
 
         fetch('/ai/process_json/', {
@@ -534,18 +541,28 @@ document.getElementById('upload-button').addEventListener('click', function () {
                 return;
             }
 
-            console.log('AI Response:', data);  // Debugging: Log AI response
+            console.log('AI Response:', data);  // Debugging
 
-            // Ensure JSON parsing is done correctly
-            const responseData = typeof data === 'string' ? JSON.parse(data) : data;
+            // Ensure JSON parsing is correct
+            let responseData;
+            try {
+                responseData = typeof data === 'string' ? JSON.parse(data) : data;
+            } catch (e) {
+                console.error("Invalid JSON received:", data);
+                alert("AI returned an invalid JSON format.");
+                return;
+            }
 
             // Update UI with extracted data
             document.getElementById('content-knowledge-score').innerText = responseData.content_knowledge_score || 'N/A';
             document.getElementById('analysis-score').innerText = responseData.analysis_score || 'N/A';
             document.getElementById('organization-score').innerText = responseData.organization_score || 'N/A';
+            document.getElementById('plagiarism-percentage').innerText = 
+            responseData.plagiarism_percentage !== undefined 
+            ? `${responseData.plagiarism_percentage}%`
+            : 'N/A';
             document.getElementById('suggested-grade').innerText = responseData.suggested_grade || 'N/A';
             document.getElementById('suggested-feedback').innerText = responseData.suggested_feedback || 'No feedback provided.';
-
         })
         .catch(error => {
             console.error('Fetch Error:', error);
