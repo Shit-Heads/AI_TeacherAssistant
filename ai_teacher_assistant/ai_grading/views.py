@@ -29,15 +29,15 @@ def upload_view(request):
 def process_json(request):
     if request.method == 'POST':
         try:
-            if 'file' not in request.FILES:
-                return JsonResponse({'error': 'No file uploaded.'})
-            
-            uploaded_file = request.FILES['file']
-            if not uploaded_file.name.endswith('.json'):
-                return JsonResponse({'error': 'Only JSON files are allowed.'})
-            
-            file_content = uploaded_file.read().decode('utf-8')
-            json_data = json.loads(file_content)
+            print("Received POST request to process_json")  # Debugging
+
+            # Parse JSON payload from request body
+            try:
+                json_data = json.loads(request.body.decode('utf-8'))
+                print("Received JSON data:", json_data)  # Debugging
+            except json.JSONDecodeError as e:
+                print(f"JSON Decode Error: {e}")  # Debugging
+                return JsonResponse({'error': 'Invalid JSON payload.'})
 
             # Extract submitted content
             submitted_content = json_data.get('content', '')
@@ -51,6 +51,8 @@ def process_json(request):
                 if similarity > 0.8:  # If similarity > 80%, mark as plagiarized
                     plagiarism_percentage = similarity * 100
                     break
+
+            print(f"Plagiarism percentage: {plagiarism_percentage}")  # Debugging
 
             # AI Grading Prompt
             prompt = f"""
@@ -107,9 +109,11 @@ def process_json(request):
             if match:
                 response_text = match.group(0)
             else:
+                print("AI response is not valid JSON.")  # Debugging
                 return JsonResponse({'error': 'AI response is not valid JSON.', 'raw_response': response_text})
 
             ai_response = json.loads(response_text)
+            print("Parsed AI Response:", ai_response)  # Debugging
 
             # Add student details before saving to Firestore
             ai_response['student_name'] = json_data.get('student_name', 'Unknown')
@@ -117,17 +121,25 @@ def process_json(request):
             ai_response['assignment'] = json_data.get('assignment', 'Unknown')
             ai_response['plagiarism_percentage'] = plagiarism_percentage
 
-            # Store in Firestore
-            doc_ref = db.collection("ai_assessments").add(ai_response)
-            ai_response['id'] = doc_ref[1].id  
+            print("Final AI Response to be stored:", ai_response)  # Debugging
+
+            try:
+                # Extract the DocumentReference from the tuple
+                result = db.collection("ai_assessments").add(ai_response)
+                doc_ref = result[1]  # The second element is the DocumentReference
+                ai_response['id'] = doc_ref.id  # Access the document ID
+                print(f"Graded result stored in Firestore with ID: {doc_ref.id}")  # Debugging
+            except Exception as e:
+                print(f"Error storing graded result in Firestore: {e}")  # Debugging
+                return JsonResponse({'error': 'Failed to store graded result in Firestore.'})
 
             return JsonResponse(ai_response)
         
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'AI response could not be parsed as JSON.', 'raw_response': response_text})
         except Exception as e:
+            print(f"Unexpected Error: {e}")  # Debugging
             return JsonResponse({'error': str(e)})
 
+    print("Invalid request method. Only POST is allowed.")  # Debugging
     return JsonResponse({'error': 'Invalid request method. Only POST is allowed.'})
 
 
