@@ -45,7 +45,7 @@ def process_json(request):
             plagiarism_percentage = 0
 
             # Check for plagiarism by comparing with Firestore data
-            existing_assignments = db.collection("submissions").stream()
+            existing_assignments = db.collection("ai_assessments").stream()
             for assignment in existing_assignments:
                 existing_content = assignment.to_dict().get('content', '')
                 similarity = SequenceMatcher(None, submitted_content, existing_content).ratio()
