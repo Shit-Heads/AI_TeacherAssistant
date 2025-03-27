@@ -1,5 +1,3 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduAssist AI | Teacher's Assistant</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'styles/submissions_view.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/submissions_views.css' %}">
     <link rel="stylesheet" href="{% static 'styles/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'styles/assignments.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -110,5 +108,73 @@
             </div>
         </div>
         <script src="{% static 'js/submissions.js' %}"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                document.getElementById("uploadJsonButton").addEventListener("click", uploadJsonFile);
+                fetchSubmissions(); // Load existing submissions when the page loads
+            });
+            
+            // ✅ Upload JSON file to Firestore
+            function uploadJsonFile() {
+                const fileInput = document.getElementById("jsonFileInput");
+                const file = fileInput.files[0];
+            
+                if (!file) {
+                    alert("Please select a JSON file.");
+                    return;
+                }
+            
+                const formData = new FormData();
+                formData.append("file", file);
+            
+                fetch("/ai/submissions_view/upload-submission/", {
+                    method: "POST",
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error("Upload failed:", data.error);
+                        alert("Error uploading submission: " + data.error);
+                    } else {
+                        console.log("Upload successful:", data);
+                        alert("Submission uploaded successfully!");
+                        fetchSubmissions(); // Refresh submissions list
+                    }
+                })
+                .catch(error => console.error("Error uploading JSON:", error));
+            }
+            
+            // ✅ Fetch all submissions from Firestore and display them
+            function fetchSubmissions() {
+                fetch("/ai/submissions_view/get-submissions/")
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.submissions) {
+                            renderSubmissions(data.submissions);
+                        }
+                    })
+                    .catch(error => console.error("Error fetching submissions:", error));
+            }
+            
+            // ✅ Render submissions in the UI
+            function renderSubmissions(submissions) {
+                const submissionsContainer = document.getElementById("assignments-content");
+                submissionsContainer.innerHTML = submissions.length > 0
+                    ? submissions.map(submission => `
+                        <div class="submission-card p-4 border rounded-lg shadow-md bg-white" data-id="${submission.id}">
+                            <div class="submission-details">
+                                <h3 class="text-lg font-semibold">${submission.student_name}</h3>
+                                <p><strong>Subject:</strong> ${submission.subject}</p>
+                                <p><strong>Class:</strong> ${submission.class}</p>
+                                <p><strong>Assignment:</strong> ${submission.assignment}</p>
+                                <p><strong>Content:</strong> ${submission.content.substring(0, 150)}...</p>
+                            </div>
+                        </div>`).join("")
+                    : "<p class='text-gray-500'>No submissions available.</p>";
+            }        
+        </script>
 </body>
 </html>
+
+

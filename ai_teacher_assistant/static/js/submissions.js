@@ -3,7 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchSubmissions(); // Load existing submissions when the page loads
 });
 
-// ✅ Upload JSON file
+
+// ✅ Upload JSON file to Firestore
 function uploadJsonFile() {
     const fileInput = document.getElementById("jsonFileInput");
     const file = fileInput.files[0];
@@ -23,16 +24,18 @@ function uploadJsonFile() {
     .then(response => response.json())
     .then(data => {
         if (data.error) {
-            alert("Error uploading: " + data.error);
+            console.error("Upload failed:", data.error);
+            alert("Error uploading submission: " + data.error);
         } else {
+            console.log("Upload successful:", data);
             alert("Submission uploaded successfully!");
             fetchSubmissions(); // Refresh submissions list
         }
     })
-    .catch(error => console.error("Upload error:", error));
+    .catch(error => console.error("Error uploading JSON:", error));
 }
 
-// ✅ Fetch submissions
+// ✅ Fetch all submissions from Firestore and display them
 function fetchSubmissions() {
     fetch("/ai/submissions_view/get-submissions/")
         .then(response => response.json())
@@ -44,17 +47,19 @@ function fetchSubmissions() {
         .catch(error => console.error("Error fetching submissions:", error));
 }
 
-// ✅ Render submissions in UI
+// ✅ Render submissions in the UI
 function renderSubmissions(submissions) {
-    const container = document.getElementById("assignments-content");
-    container.innerHTML = submissions.length > 0
-        ? submissions.map(sub => `
-            <div class="submission-card p-4 border rounded-lg shadow-md bg-white" data-id="${sub.id}">
-                <h3 class="text-lg font-semibold">${sub.student_name}</h3>
-                <p><strong>Subject:</strong> ${sub.subject}</p>
-                <p><strong>Class:</strong> ${sub.class}</p>
-                <p><strong>Assignment:</strong> ${sub.assignment}</p>
-                <p><strong>Content:</strong> ${sub.content.substring(0, 150)}...</p>
+    const submissionsContainer = document.getElementById("assignments-content");
+    submissionsContainer.innerHTML = submissions.length > 0
+        ? submissions.map(submission => `
+            <div class="submission-card p-4 border rounded-lg shadow-md bg-white" data-id="${submission.id}">
+                <div class="submission-details">
+                    <h3 class="text-lg font-semibold">${submission.student_name}</h3>
+                    <p><strong>Subject:</strong> ${submission.subject}</p>
+                    <p><strong>Class:</strong> ${submission.class}</p>
+                    <p><strong>Assignment:</strong> ${submission.assignment}</p>
+                    <p><strong>Content:</strong> ${submission.content.substring(0, 150)}...</p>
+                </div>
             </div>`).join("")
         : "<p class='text-gray-500'>No submissions available.</p>";
 }
@@ -74,17 +79,17 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(response => response.json())
             .then(data => {
                 if (data.submissions) {
-                    submissionsList.innerHTML = data.submissions.map(sub => `
+                    submissionsList.innerHTML = data.submissions.map(submission => `
                         <div class="flex items-center">
-                            <input type="checkbox" class="submission-checkbox mr-2" data-id="${sub.id}">
+                            <input type="checkbox" class="submission-checkbox mr-2" data-id="${submission.id}">
                             <div>
-                                <h3 class="font-semibold">${sub.student_name}</h3>
-                                <p><strong>Subject:</strong> ${sub.subject}</p>
-                                <p><strong>Assignment:</strong> ${sub.assignment}</p>
+                                <h3 class="font-semibold">${submission.student_name}</h3>
+                                <p><strong>Subject:</strong> ${submission.subject}</p>
+                                <p><strong>Assignment:</strong> ${submission.assignment}</p>
                             </div>
                         </div>
                     `).join("");
-                    gradingModal.style.display = "block";
+                    gradingModal.classList.remove("hidden");
                 }
             })
             .catch(error => console.error("Error fetching submissions:", error));
@@ -92,44 +97,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Close modal
     closeModal.addEventListener("click", () => {
-        gradingModal.style.display = "none";
+        gradingModal.classList.add("hidden");
     });
 
-    // Handle "Select All"
+    // Handle "Select All" functionality
     selectAllCheckbox.addEventListener("change", (e) => {
-        document.querySelectorAll(".submission-checkbox").forEach(checkbox => {
-            checkbox.checked = e.target.checked;
-        });
+        const checkboxes = document.querySelectorAll(".submission-checkbox");
+        checkboxes.forEach(checkbox => checkbox.checked = e.target.checked);
     });
 
-    // Submit for grading
+    // Submit selected assignments for grading
     submitGradingButton.addEventListener("click", () => {
-        const selectedIds = Array.from(document.querySelectorAll(".submission-checkbox:checked"))
+        const selectedSubmissions = Array.from(document.querySelectorAll(".submission-checkbox:checked"))
             .map(checkbox => checkbox.dataset.id);
 
-        if (selectedIds.length === 0) {
+        if (selectedSubmissions.length === 0) {
             alert("Please select at least one submission.");
             return;
         }
 
-        // Fetch only selected submissions
-        Promise.all(selectedIds.map(id =>
-            fetch(`/ai/submissions_view/get-submission/${id}`)
+        // Fetch submission data and send to AI grading endpoint
+        Promise.all(selectedSubmissions.map(id => {
+            return fetch(`/ai/submissions_view/get-submissions/`)
                 .then(response => response.json())
-        )).then(submissions => {
-            return Promise.all(submissions.map(submission =>
+                .then(data => data.submissions.find(submission => submission.id === id));
+        })).then(submissions => {
+            submissions.forEach(submission => {
                 fetch("/ai/process_json/", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
                     body: JSON.stringify(submission),
                 })
                 .then(response => response.json())
-            ));
-        }).then(results => {
-            console.log("Grading completed:", results);
-            alert("Grading process initiated.");
-            fetchSubmissions(); // Refresh submissions
-            gradingModal.style.display = "none";
-        }).catch(error => console.error("Error grading submissions:", error));
+                .then(data => {
+                    if (data.error) {
+                        console.error("Error grading submission:", data.error);
+                    } else {
+                        console.log("Grading successful:", data);
+                    }
+                })
+                .catch(error => console.error("Error grading submission:", error));
+            });
+
+            alert("Grading process initiated for selected submissions.");
+            gradingModal.classList.add("hidden");
+        }).catch(error => console.error("Error fetching submission data:", error));
     });
 });
+

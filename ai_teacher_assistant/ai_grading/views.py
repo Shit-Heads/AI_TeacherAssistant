@@ -1,3 +1,4 @@
+
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -10,7 +11,7 @@ from difflib import SequenceMatcher  # For plagiarism detection
 import re  # To extract JSON correctly
 
 # Initialize Firebase
-cred = credentials.Certificate(r"D:\Programming Projects\AI_TeacherAssistant\ai_teacher_assistant\cloud_tokens\serviceAccountKey.json")  # Update your path
+cred = credentials.Certificate(r"C:\Users\gowth\Projects\recipe_data_django\AI_TeacherAssistant\ai_teacher_assistant\cloud_tokens\serviceAccountKey.json")  # Update your path
 firebase_admin.initialize_app(cred)
 db = firestore.client()  # Firestore database instance
 
@@ -124,10 +125,9 @@ def process_json(request):
             print("Final AI Response to be stored:", ai_response)  # Debugging
 
             try:
-                # Extract the DocumentReference from the tuple
                 result = db.collection("ai_assessments").add(ai_response)
-                doc_ref = result[1]  # The second element is the DocumentReference
-                ai_response['id'] = doc_ref.id  # Access the document ID
+                doc_ref = result[1]  # Extract the DocumentReference
+                ai_response['id'] = doc_ref.id  # Get the document ID from the DocumentReference
                 print(f"Graded result stored in Firestore with ID: {doc_ref.id}")  # Debugging
             except Exception as e:
                 print(f"Error storing graded result in Firestore: {e}")  # Debugging
