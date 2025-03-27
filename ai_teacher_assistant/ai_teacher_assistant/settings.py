@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+FIREBASE_TOKEN = r"D:\Programming Projects\AI_TeacherAssistant\ai_teacher_assistant\cloud_tokens\serviceAccountKey.json"
 
 # Application definition
 

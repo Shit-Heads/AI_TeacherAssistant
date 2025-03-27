@@ -4,7 +4,9 @@ from django.conf import settings
 import os
 from datetime import datetime
 
-FIREBASE_TOKEN_PATH = r"D:\Programming Projects\AI_TeacherAssistant\ai_teacher_assistant\bingusfirebase.json"
+# FIREBASE_TOKEN_PATH = r"D:\Programming Projects\AI_TeacherAssistant\ai_teacher_assistant\bingusfirebase.json"
+
+FIREBASE_TOKEN_PATH = settings.FIREBASE_TOKEN
 
 # Initialize Firebase only once
 try:

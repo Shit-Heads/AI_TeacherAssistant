@@ -1,4 +1,3 @@
-
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -9,9 +8,10 @@ from google import genai
 from google.genai import types
 from difflib import SequenceMatcher  # For plagiarism detection
 import re  # To extract JSON correctly
+from django.conf import settings
 
 # Initialize Firebase
-cred = credentials.Certificate(r"C:\Users\gowth\Projects\recipe_data_django\AI_TeacherAssistant\ai_teacher_assistant\cloud_tokens\serviceAccountKey.json")  # Update your path
+cred = credentials.Certificate(settings.FIREBASE_TOKEN)  # Update your path
 firebase_admin.initialize_app(cred)
 db = firestore.client()  # Firestore database instance
 
