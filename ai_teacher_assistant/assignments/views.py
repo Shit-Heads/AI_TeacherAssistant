@@ -7,7 +7,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 
 #  Initialize Firestore (Directly using Service Account Key)
-SERVICE_ACCOUNT_PATH = r"C:\Users\gowth\Projects\recipe_data_django\AI_TeacherAssistant\ai_teacher_assistant\serviceAccountKey.json"  # Change this to your actual path
+SERVICE_ACCOUNT_PATH = r"D:\Programming Projects\AI_TeacherAssistant\ai_teacher_assistant\bingusfirebase.json"  # Change this to your actual path
 
 # Check if the app is already initialized and delete it if necessary
 if firebase_admin._apps:

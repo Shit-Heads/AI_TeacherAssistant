@@ -10,7 +10,7 @@ from difflib import SequenceMatcher  # For plagiarism detection
 import re  # To extract JSON correctly
 
 # Initialize Firebase
-cred = credentials.Certificate(r"C:\Users\gowth\Projects\recipe_data_django\AI_TeacherAssistant\ai_teacher_assistant\serviceAccountKey.json")  # Update your path
+cred = credentials.Certificate(r"D:\Programming Projects\AI_TeacherAssistant\ai_teacher_assistant\cloud_tokens\serviceAccountKey.json")  # Update your path
 firebase_admin.initialize_app(cred)
 db = firestore.client()  # Firestore database instance
 
