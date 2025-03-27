@@ -177,147 +177,6 @@ function showNotification(message) {
         }, 300);
     }, 3000);
 }
-
-// Add new assignment functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const newAssignmentButton = document.querySelector('.btn-primary i.fas.fa-plus').parentElement;
-    
-    newAssignmentButton.addEventListener('click', function() {
-        showNewAssignmentForm();
-    });
-});
-
-function showNewAssignmentForm() {
-    // Create modal overlay
-    const overlay = document.createElement('div');
-    overlay.className = 'modal-overlay';
-    Object.assign(overlay.style, {
-        position: 'fixed',
-        top: '0',
-        left: '0',
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        zIndex: '1000',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-    });
-    
-    // Create modal content
-    const modal = document.createElement('div');
-    modal.className = 'modal';
-    Object.assign(modal.style, {
-        backgroundColor: 'var(--bg-card)',
-        borderRadius: '12px',
-        padding: '24px',
-        width: '90%',
-        maxWidth: '600px',
-        boxShadow: 'var(--shadow-md)',
-        animation: 'fadeIn 0.3s ease-out'
-    });
-    
-    // Modal header
-    const header = document.createElement('div');
-    header.innerHTML = `
-        <h2 style="margin-bottom: 20px; font-size: 20px; font-weight: 600;">Create New Assignment</h2>
-    `;
-    
-    // Modal form
-    const form = document.createElement('form');
-    form.innerHTML = `
-        <div style="margin-bottom: 16px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Assignment Title</label>
-            <input type="text" placeholder="Enter assignment title" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); font-family: 'Poppins', sans-serif;">
-        </div>
-        <div style="margin-bottom: 16px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Class/Grade</label>
-            <select style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); font-family: 'Poppins', sans-serif;">
-                <option>Grade 9</option>
-                <option>Grade 10</option>
-                <option>Grade 11</option>
-                <option>Grade 12</option>
-            </select>
-        </div>
-        <div style="margin-bottom: 16px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Due Date</label>
-            <input type="date" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); font-family: 'Poppins', sans-serif;">
-        </div>
-        <div style="margin-bottom: 16px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Assignment Description</label>
-            <textarea rows="4" placeholder="Enter assignment description" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); font-family: 'Poppins', sans-serif; resize: vertical;"></textarea>
-        </div>
-        <div style="margin-bottom: 16px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Grading Rubric</label>
-            <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                <input type="text" placeholder="Criterion name" style="flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); margin-right: 8px;">
-                <input type="number" placeholder="Points" style="width: 80px; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color);">
-            </div>
-            <button type="button" style="background: none; border: none; color: var(--primary-color); cursor: pointer; font-size: 14px;">+ Add Criterion</button>
-        </div>
-        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
-            <button type="button" class="cancel-btn" style="padding: 10px 16px; border-radius: 8px; border: 1px solid var(--border-color); background: none; cursor: pointer; font-family: 'Poppins', sans-serif;">Cancel</button>
-            <button type="submit" style="padding: 10px 16px; border-radius: 8px; border: none; background-color: var(--primary-color); color: white; cursor: pointer; font-family: 'Poppins', sans-serif;">Create Assignment</button>
-        </div>
-    `;
-    
-    // Add content to modal
-    modal.appendChild(header);
-    modal.appendChild(form);
-    overlay.appendChild(modal);
-    
-    // Add to DOM
-    document.body.appendChild(overlay);
-    
-    // Handle close modal
-    const cancelBtn = overlay.querySelector('.cancel-btn');
-    cancelBtn.addEventListener('click', function() {
-        document.body.removeChild(overlay);
-    });
-    
-    // Handle form submission
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        showNotification('New assignment created successfully!');
-        document.body.removeChild(overlay);
-        
-        // In a real application, we would save the assignment data here
-        // and update the UI with the new assignment
-        addNewAssignmentToUI();
-    });
-}
-
-function addNewAssignmentToUI() {
-    // Get the assignments list container
-    const assignmentsList = document.querySelector('.assignments-list');
-    
-    // Create new assignment card
-    const newAssignment = document.createElement('div');
-    newAssignment.className = 'assignment-card';
-    newAssignment.innerHTML = `
-        <div class="assignment-info">
-            <h3>New Assignment</h3>
-            <p>Grade 9 • Due Apr 05</p>
-            <div class="progress-container">
-                <div class="progress-bar" style="width: 0%"></div>
-            </div>
-            <div class="assignment-meta">
-                <span><i class="fas fa-user-graduate"></i> 0/30 submitted</span>
-                <span><i class="fas fa-check-circle"></i> 0 graded</span>
-            </div>
-        </div>
-        <div class="assignment-actions">
-            <button class="btn btn-secondary">Manage</button>
-        </div>
-    `;
-    
-    // Add to the beginning of the list
-    assignmentsList.insertBefore(newAssignment, assignmentsList.firstChild);
-    
-    // Add animation
-    newAssignment.style.animation = 'fadeIn 0.5s ease-out';
-}
-
 // Initialize insights interaction
 document.addEventListener('DOMContentLoaded', function() {
     setupInsightsButtons();
@@ -449,58 +308,13 @@ function exportReport(type) {
     }
 }
 
-// Load more assignments when needed
-function loadMoreAssignments() {
-    // In a real app, this would fetch more data from the server
-    showNotification('Loading more assignments...');
-    
-    // Simulate network delay
-    setTimeout(() => {
-        const assignmentsList = document.querySelector('.assignments-list');
-        
-        // Sample new assignment
-        const newAssignment = document.createElement('div');
-        newAssignment.className = 'assignment-card';
-        newAssignment.innerHTML = `
-            <div class="assignment-info">
-                <h3>Mathematics: Algebraic Equations</h3>
-                <p>Grade 10 • Due Apr 10</p>
-                <div class="progress-container">
-                    <div class="progress-bar" style="width: 25%"></div>
-                </div>
-                <div class="assignment-meta">
-                    <span><i class="fas fa-user-graduate"></i> 8/32 submitted</span>
-                    <span><i class="fas fa-check-circle"></i> 8 graded</span>
-                </div>
-            </div>
-            <div class="assignment-actions">
-                <button class="btn btn-secondary">Grade</button>
-            </div>
-        `;
-        
-        // Add to the list
-        assignmentsList.appendChild(newAssignment);
-        
-        // Add animation
-        newAssignment.style.animation = 'fadeIn 0.5s ease-out';
-    }, 1200);
-}
+
 
 // Initialize application when DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Check for mobile view on initial load
     adjustForMobileView();
     
-    // Set up "View All" buttons
-    document.querySelectorAll('.btn-text').forEach(btn => {
-        if (btn.textContent.includes('View All')) {
-            btn.addEventListener('click', function() {
-                loadMoreAssignments();
-            });
-        }
-    });
-    
-    // Initialize any charts or data visualizations
     initializeCharts();
     
     // Show welcome notification after a delay

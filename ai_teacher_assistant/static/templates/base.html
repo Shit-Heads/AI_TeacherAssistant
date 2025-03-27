@@ -39,11 +39,17 @@
             </ul> 
             <div class="user-profile"> 
                 <div class="avatar"> 
-                    <img src="" alt="Teacher Profile"> 
+                    {% if profile.role == "teacher" %}
+                        <i class="fas fa-chalkboard-teacher" style="font-size:25px;margin-left:5px; margin-top: 10px;"></i>
+                    {% elif profile.role == "student" %}
+                        <i class="fas fa-user-graduate" style="font-size:25px;margin-left:5px; margin-top: 10px;"></i>
+                    {% else %}
+                        <i class="fas fa-user" style="font-size:25px;margin-left:5px; margin-top: 10px;"></i>
+                    {% endif %}
                 </div> 
-                <div class="user-info"> 
-                    <h4>aa</h4> 
-                    <p>teacher</p> 
+                <div class="user-info" > 
+                    <h4>{{username}}</h4> 
+                    <p>{{ profile.role|default:"No Role Assigned"|capfirst }}</p> 
                 </div> 
             </div> 
         </nav>

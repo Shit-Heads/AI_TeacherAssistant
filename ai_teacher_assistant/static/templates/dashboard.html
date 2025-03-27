@@ -16,8 +16,12 @@
                     <a class="btn btn-outline" href="{% url 'logout' %}"> Logout</a>
                 </div>
             </header>
-            <h1>Welcome back, Gowtham!</h1>
+            <div class="div">
+                <h1 >Welcome back, {{username}}</h1>
+            </div>
+            
             <p class="subtitle">Here's an overview of your teaching assistant activity</p>
+
                 <!-- Stats Overview -->
                 <div class="stats-container">
                     <div class="stat-card">
@@ -25,7 +29,7 @@
                             <i class="fas fa-hourglass-half"></i>
                         </div>
                         <div class="stat-details">
-                            <h3>24</h3>
+                            <h3>{{pending}}</h3>
                             <p>Pending Grading</p>
                         </div>
                     </div>
@@ -34,8 +38,8 @@
                             <i class="fas fa-check-circle"></i>
                         </div>
                         <div class="stat-details">
-                            <h3>156</h3>
-                            <p>Graded This Week</p>
+                            <h3>{{graded}}</h3>
+                            <p>Graded Assignments Count</p>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -52,68 +56,39 @@
                             <i class="fas fa-clock"></i>
                         </div>
                         <div class="stat-details">
-                            <h3>18 hrs</h3>
+                            <h3>{{time_saved}}</h3>
                             <p>Time Saved</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Recent Assignments Section -->
-                <section class="assignments-section">
+                <section class="assignments-section" method="POST">
                     <div class="section-header">
                         <h2>Recent Assignments</h2>
-                        <button class="btn btn-text">View All <i class="fas fa-arrow-right"></i></button>
-                    </div>
-                    <div class="assignments-list">
-                        <div class="assignment-card">
-                            <div class="assignment-info">
-                                <h3>Physics: Motion and Forces</h3>
-                                <p>Grade 10 • Due Mar 15</p>
-                                <div class="progress-container">
-                                    <div class="progress-bar" style="width: 75%"></div>
-                                </div>
-                                <div class="assignment-meta">
-                                    <span><i class="fas fa-user-graduate"></i> 28/32 submitted</span>
-                                    <span><i class="fas fa-check-circle"></i> 21 graded</span>
-                                </div>
-                            </div>
-                            <div class="assignment-actions">
-                                <button class="btn btn-secondary">Grade</button>
-                            </div>
+                        <button class="btn btn-text" id="view-all-btn">View All <i class="fas fa-arrow-right"></i></button>
                         </div>
-                        <div class="assignment-card">
-                            <div class="assignment-info">
-                                <h3>Chemistry: Periodic Table Quiz</h3>
-                                <p>Grade 11 • Due Mar 16</p>
-                                <div class="progress-container">
-                                    <div class="progress-bar" style="width: 100%"></div>
+                        <div class="assignments-list" style="display: flex; flex-wrap: wrap; gap: 16px;">
+                            {% for assign in assignments|slice:":3" %}
+                            <div class="assignment-card" style="flex: 1 1 calc(33.333% - 16px); box-sizing: border-box;">
+                                <div class="assignment-info">
+                                    <h3>{{assign.subject}}: {{assign.name}}</h3>
+                                    <p>Grade {{assign.grade}} • {{assign.due_date}}</p>
+                                    <!-- <div class="progress-container">
+                                        <div class="progress-bar" style="width: 75%"></div>
+                                    </div> -->
+                                    <div class="assignment-meta">
+                                        <span><i class="fas fa-user-graduate"></i> {{ assign.submitted_users|length }} submitted</span>
+                                    </div>
                                 </div>
-                                <div class="assignment-meta">
-                                    <span><i class="fas fa-user-graduate"></i> 26/26 submitted</span>
-                                    <span><i class="fas fa-check-circle"></i> 26 graded</span>
+                                <div class="assignment-actions">
+                                    <button class="btn btn-primary" style="background-color: #3b82f6; color: white;">Grade</button>
                                 </div>
                             </div>
-                            <div class="assignment-actions">
-                                <button class="btn btn-secondary disabled">Completed</button>
-                            </div>
+                            {% endfor %}
                         </div>
-                        <div class="assignment-card active">
-                            <div class="assignment-info">
-                                <h3>Biology: Ecosystem Analysis</h3>
-                                <p>Grade 9 • Due Today</p>
-                                <div class="progress-container">
-                                    <div class="progress-bar" style="width: 40%"></div>
-                                </div>
-                                <div class="assignment-meta">
-                                    <span><i class="fas fa-user-graduate"></i> 18/30 submitted</span>
-                                    <span><i class="fas fa-check-circle"></i> 12 graded</span>
-                                </div>
-                            </div>
-                            <div class="assignment-actions">
-                                <button class="btn btn-primary">Grade Now</button>
-                            </div>
-                        </div>
-                    </div>
+
+                        
                 </section>
 
                 <!-- AI Insights Section -->
@@ -222,4 +197,30 @@
         </main>
     </div>
     <script src="{% static 'js/dashboard.js' %}"></script>
+    <script>
+        document.getElementById('view-all-btn').addEventListener('click', function () {
+            const assignmentsList = document.querySelector('.assignments-list');
+            assignmentsList.innerHTML = `
+                {% for assign in assignments %}
+                <div class="assignment-card" style="flex: 1 1 calc(33.333% - 16px); box-sizing: border-box;">
+                    <div class="assignment-info">
+                        <h3>{{assign.subject}}: {{assign.name}}</h3>
+                        <p>Grade {{assign.grade}} • {{assign.due_date}}</p>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 75%"></div>
+                        </div>
+                        <div class="assignment-meta">
+                            <span><i class="fas fa-user-graduate"></i> 28/32 submitted</span>
+                        </div>
+                    </div>
+                    <div class="assignment-actions">
+                        <button class="btn btn-secondary">Grade</button>
+                    </div>
+                </div>
+                {% endfor %}
+            `;
+            this.style.display = 'none';
+        });
+    </script>
+
     {% endblock %}
