@@ -61,30 +61,33 @@ class AssignmentManager:
             print(f"Error fetching assignments: {e}")
             return []
 
-    def get_pending_assignments(self, grade=None, subject=None):
+    def get_pending_assignments(self, grade=None, subject=None, username=None):
         """
         Fetch pending assignments
         
         :param grade: Optional grade level to filter
         :param subject: Optional subject to filter
+        :param username: Optional username to check submission status
         :return: List of pending assignment dictionaries
         """
         try:
             # Get all assignments
             assignments = self.get_assignments(grade, subject)
             
-            # Filter for assignments not yet due
+            # Get current time
             now = datetime.now()
+            
+            # Filter for assignments not yet due
             pending_assignments = [
                 assignment for assignment in assignments
-                if (assignment.get('status') != 'submitted') and 
-                   (datetime.strptime(assignment['due_date'], '%Y-%m-%d') > now)
+                if(datetime.strptime(assignment['due_date'], '%Y-%m-%d') > now) and (not username or (assignment.get('submitted_users') is None) or (username not in assignment.get('submitted_users', [])))
             ]
             
             return pending_assignments
         except Exception as e:
             print(f"Error fetching pending assignments: {e}")
             return []
+
 
     def get_assignment_by_id(self, assignment_id):
         """
@@ -112,10 +115,13 @@ class AssignmentManager:
         :param class_name: Student's class
         :param questions_answers: List of question-answer dictionaries
         :param subject: Subject of the submission
+        :param assignment_id: ID of the assignment
+        :param username: Username of the student
         :return: True if successful, False otherwise
         """
         try:
             assignment = self.get_assignment_by_id(assignment_id)
+            
             # Iterate through questions and answers and save each as a separate document
             for qa in questions_answers:
                 submission_data = {
@@ -126,18 +132,17 @@ class AssignmentManager:
                     'assignment': qa['question'],
                     'content': qa['answer'],
                     'timestamp': firestore.SERVER_TIMESTAMP,
-                    'status': 'submitted'
+                    'status': 'submitted',
+                    'submitted_by': username
                 }
                 
                 # Add document to submissions collection
                 self.submissions_ref.add(submission_data)
 
-            # Mark assignment as submitted
+            # Update assignment to track submitted users
             assignment_doc = self.assignments_ref.document(assignment_id)
             assignment_doc.update({
-                'status': 'submitted',
-                'submitted_at': firestore.SERVER_TIMESTAMP,
-                'submitted_by': username
+                'submitted_users': firestore.ArrayUnion([username]),
             })
             
             return True
@@ -208,8 +213,8 @@ class AssignmentManager:
             if subject:
                 query = query.where('subject', '==', subject)
 
-            # Filter for submitted assignments
-            query = query.where('status', '==', 'submitted')
+            # Filter for assignments with submitted users
+            query = query.where('submitted_users', '!=', [])
 
             # Fetch assignments
             assignments = query.stream()
@@ -227,7 +232,6 @@ class AssignmentManager:
                         due_date = datetime.strptime(assignment_dict['due_date'], '%Y-%m-%d')
                         assignment_dict['formatted_due_date'] = due_date.strftime('%B %d, %Y')
                     except ValueError:
-                        # Handle date parsing errors if needed
                         assignment_dict['formatted_due_date'] = assignment_dict['due_date']
 
                 processed_assignments.append(assignment_dict)
