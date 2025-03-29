@@ -151,6 +151,18 @@ def submissions_view(request):
     """Render the submissions.html template"""
     return render(request, '../static/templates/submissions_view.html')
 
+def get_ai_grading(request, ai_assessments_id):
+    try:
+        # Fetch the AI-graded details from Firestore
+        doc_ref = db.collection("ai_assessments").document(ai_assessments_id)
+        doc = doc_ref.get()
+        if doc.exists:
+            return JsonResponse(doc.to_dict(), status=200)
+        else:
+            return JsonResponse({"error": "AI grading details not found."}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
 # ✅ Fetch Student Submissions
 def get_submissions(request):
     try:

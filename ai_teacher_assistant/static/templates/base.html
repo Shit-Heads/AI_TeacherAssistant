@@ -27,10 +27,10 @@
                 <li class="{% if request.path == '/assignments/' %}active{% endif %}"> 
                     <a href="{% url 'assignments_view' %}"><i class="fas fa-book"></i> Assignments</a> 
                 </li> 
-                <!-- <li class="{% if request.path == '/students/' %}active{% endif %}"> 
-                    <a href=""><i class="fas fa-users"></i> Students</a> 
+                <li class="{% if request.path == '/submissions_view/' %}active{% endif %}"> 
+                    <a href="{% url 'submissions_view' %}"><i class="fas fa-file"></i> Submissions</a>
                 </li> 
-                <li class="{% if request.path == '/analytics/' %}active{% endif %}"> 
+                <!-- <li class="{% if request.path == '/analytics/' %}active{% endif %}"> 
                     <a href=""><i class="fas fa-chart-line"></i> Analytics</a> 
                 </li> 
                 <li class="{% if request.path == '/settings/' %}active{% endif %}"> 

@@ -22,6 +22,9 @@
             <ul class="nav-links">
                 <li><a href="{% url 'teachdash' %}"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li class="active"><a href="{% url 'assignments_view' %}"><i class="fas fa-book"></i> Assignments</a></li>
+                <li class="{% if request.path == '/submissions_view/' %}active{% endif %}"> 
+                    <a href="{% url 'submissions_view' %}"><i class="fas fa-file"></i> Submissions</a>
+                </li> 
                 <!-- <li><a href=""><i class="fas fa-users"></i> Students</a></li>
                 <li><a href=""><i class="fas fa-chart-line"></i> Analytics</a></li>
                 <li><a href=""><i class="fas fa-cog"></i> Settings</a></li> -->
