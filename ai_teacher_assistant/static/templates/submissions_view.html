@@ -32,15 +32,21 @@
                 <li><a href=""><i class="fas fa-chart-line"></i> Analytics</a></li>
                 <li><a href=""><i class="fas fa-cog"></i> Settings</a></li> -->
             </ul>
-            <div class="user-profile">
-                <div class="avatar">
-                    <img src="https://via.placeholder.com/150" alt="User Avatar">
-                </div>
-                <div class="user-info">
-                    <h4>Ms. Johnson</h4>
-                    <p>Science Teacher</p>
-                </div>
-            </div>
+            <div class="user-profile"> 
+                <div class="avatar"> 
+                    {% if profile.role == "teacher" %}
+                        <i class="fas fa-chalkboard-teacher" style="font-size:25px;margin-left:5px; margin-top: 10px;"></i>
+                    {% elif profile.role == "student" %}
+                        <i class="fas fa-user-graduate" style="font-size:25px;margin-left:5px; margin-top: 10px;"></i>
+                    {% else %}
+                        <i class="fas fa-user" style="font-size:25px;margin-left:5px; margin-top: 10px;"></i>
+                    {% endif %}
+                </div> 
+                <div class="user-info" > 
+                    <h4>{{username}}</h4> 
+                    <p>{{ profile.role|default:"No Role Assigned"|capfirst }}</p> 
+                </div> 
+            </div> 
         </nav>
 
         <!-- Main Content Area -->

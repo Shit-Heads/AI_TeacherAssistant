@@ -118,15 +118,15 @@
                 <li><a href="{% url 'pending_submissions' %}"><i class="fas fa-file-alt"></i> Pending Assignments</a></li>
                 <li class="{% if request.path == '/submissions/submitted/' %}active{% endif %}"><a href="{% url 'submitted_assignments' %}"><i class="fas fa-file-alt"></i> Submitted Assignments</a></li>
             </ul>
-            <div class="user-profile">
-                <div class="avatar">
-                    <img src="https://via.placeholder.com/48" alt="Teacher Profile">
-                </div>
-                <div class="user-info">
-                    <h4>{{ user.username }}</h4>
-                    <p>Student</p>
-                </div>
-            </div>
+            <div class="user-profile"> 
+                <div class="avatar"> 
+                    <i class="fas fa-user-graduate" style="font-size:25px;margin-left:5px; margin-top: 10px;"></i>
+                </div> 
+                <div class="user-info" > 
+                    <h4>{{username}}</h4> 
+                    <p>{{ profile.role|default:"No Role Assigned"|capfirst }}</p> 
+                </div> 
+            </div> 
         </nav>
 
         <!-- Main Content Area -->
