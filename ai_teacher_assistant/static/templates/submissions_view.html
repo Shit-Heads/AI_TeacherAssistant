@@ -200,8 +200,9 @@
                 });
             }   
 
-            function fetchAIDetails(ai_assessments_id) {
-                fetch(`/ai/submissions_view/get-ai-grading/${ai_assessments_id}/`)
+            function fetchAIDetails(submissionId) {
+                console.log("Fetching AI grading details for submission ID:", submissionId); // Debugging log
+                fetch(`/ai/submissions_view/get-ai-grading/${submissionId}/`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.error) {
