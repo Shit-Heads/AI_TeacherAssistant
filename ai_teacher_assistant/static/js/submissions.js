@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("uploadJsonButton").addEventListener("click", uploadJsonFile);
+    document.getElementById("gradeButton").addEventListener("click", uploadJsonFile);
     fetchSubmissions(); // Load existing submissions when the page loads
 });
 
