@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 import firebase_admin
 from firebase_admin import credentials, firestore
 from django.conf import settings
+from authentication.models import UserProfile
 
 #  Initialize Firestore (Directly using Service Account Key)
 SERVICE_ACCOUNT_PATH = settings.FIREBASE_TOKEN  # Change this to your actual path
@@ -62,4 +63,16 @@ def delete_assignment(request, assignment_id):
 
 @login_required
 def dashboard(request):
-    return render(request, '../static/templates/dashboard.html')
+    submissions=db.collection("submissions").get()
+    sub_count=len(submissions)
+    graded=db.collection("ai_assessments").get()
+    graded_count=len(graded)
+    pending=sub_count-graded_count
+
+    time_saved=graded_count*4
+
+    assignments = db.collection("assignments").stream()
+    assignments_data = [{"id": doc.id, **doc.to_dict()} for doc in assignments]
+    return render(request, '../static/templates/dashboard.html', {"assignments": assignments_data,'pending':pending,'graded':graded_count,'time_saved':time_saved})
+
+

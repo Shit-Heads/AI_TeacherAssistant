@@ -67,26 +67,31 @@ def profile_view(request):
         profile = UserProfile.objects.get(user_id=str(request.user.id))
     except UserProfile.DoesNotExist:
         profile = None
-    return render(request, 'authentication/profile.html', {'profile': profile})
+    return render(request, 'authentication/profile.html', {'profile': profile, 'username': request.user.username})
 
 @login_required
 @role_required('teacher', 'admin')
 def teacher_dashboard(request):
-    return render(request, 'templates/dashboard.html')
+    profile = UserProfile.objects.filter(user_id=str(request.user.id)).first()
+    return render(request, 'templates/dashboard.html', {'profile': profile, 'username': request.user.username})
 
 @login_required
 @role_required('student')
 def student_dashboard(request):
-    return render(request, 'templates/submission_portal.html')
+    profile = UserProfile.objects.filter(user_id=str(request.user.id)).first()
+    username = request.user.username
+    return render(request, 'templates/submission_portal.html', {'profile': profile, 'username': username})
 
 @login_required
 @role_required('admin')
 def admin_dashboard(request):
-    return render(request, 'authentication/admin_dashboard.html')
+    profile = UserProfile.objects.filter(user_id=str(request.user.id)).first()
+    return render(request, 'authentication/admin_dashboard.html', {'profile': profile, 'username': request.user.username})
 
 @login_required
 def dashboard(request):
     profile = UserProfile.objects.filter(user_id=str(request.user.id)).first()
+    username = request.user.username
     if profile:
         if profile.role == 'teacher':
             template = 'authentication/teacher_dashboard.html'
@@ -97,4 +102,4 @@ def dashboard(request):
             template = 'templates/submission_portal.html'
     else:
         template = 'authentication/login.html'
-    return render(request, template, {'profile': profile})
+    return render(request, template, {'profile': profile, 'username': username})
