@@ -42,6 +42,7 @@ def process_json(request):
 
             # Extract submitted content
             submitted_content = json_data.get('content', '')
+            submission_id = json_data.get('id')  # Extract the submission ID
             plagiarism_percentage = 0
 
             # Check for plagiarism by comparing with Firestore data
@@ -116,11 +117,12 @@ def process_json(request):
             ai_response = json.loads(response_text)
             print("Parsed AI Response:", ai_response)  # Debugging
 
-            # Add student details before saving to Firestore
+            # Add student details and submission ID before saving to Firestore
             ai_response['student_name'] = json_data.get('student_name', 'Unknown')
             ai_response['subject'] = json_data.get('subject', 'Unknown')
             ai_response['assignment'] = json_data.get('assignment', 'Unknown')
             ai_response['plagiarism_percentage'] = plagiarism_percentage
+            ai_response['submission_id'] = submission_id  # Link to the submission
 
             print("Final AI Response to be stored:", ai_response)  # Debugging
 
@@ -151,13 +153,14 @@ def submissions_view(request):
     """Render the submissions.html template"""
     return render(request, '../static/templates/submissions_view.html')
 
-def get_ai_grading(request, ai_assessments_id):
+def get_ai_grading(request, submission_id):
     try:
-        # Fetch the AI-graded details from Firestore
-        doc_ref = db.collection("ai_assessments").document(ai_assessments_id)
-        doc = doc_ref.get()
-        if doc.exists:
-            return JsonResponse(doc.to_dict(), status=200)
+        # Query Firestore for the AI grading result matching the submission ID
+        ai_grading_query = db.collection("ai_assessments").where("submission_id", "==", submission_id).stream()
+        ai_grading_results = [doc.to_dict() for doc in ai_grading_query]
+
+        if ai_grading_results:
+            return JsonResponse(ai_grading_results[0], status=200)  # Return the first matching result
         else:
             return JsonResponse({"error": "AI grading details not found."}, status=404)
     except Exception as e:

@@ -74,7 +74,7 @@
                     </div>
 
                     <!-- Assignments Content -->
-                    <div id="assignments-content" class="p-6 mb-10">
+                    <div id="assignments-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 p-6">
                         <!-- Assignments will be dynamically populated here -->
                     </div>
                 </div>
@@ -83,19 +83,49 @@
 
         <!-- AI Grading Details Modal -->
         <div id="aiGradingModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
-            <div class="bg-white rounded-lg shadow-lg w-3/4 max-h-[80%] overflow-y-auto">
-                <!-- Modal Header -->
-                <div class="p-4 border-b flex justify-between items-center">
-                    <h2 class="text-xl font-bold text-gray-800">AI Grading Details</h2>
-                    <button id="closeAIModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            <div class="bg-white rounded-lg shadow-lg w-3/4 max-h-[80%] overflow-hidden flex">
+                
+                <!-- Submission Details (Left) -->
+                <div class="w-1/3 bg-gray-100 p-6 border-r">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Submission Details</h2>
+                    <p class="mb-2"><strong>Student:</strong> <span id="ai-student-name"></span></p>
+                    <p class="mb-2"><strong>Subject:</strong> <span id="ai-subject"></span></p>
+                    <p class="mb-4"><strong>Assignment:</strong> <span id="ai-assignment"></span></p>
                 </div>
 
-                <!-- Modal Body -->
-                <div id="aiGradingContent" class="p-4">
-                    <!-- AI Grading details will be dynamically populated here -->
+                <!-- Grading Details (Right) -->
+                <div class="w-2/3 p-6 flex flex-col">
+                    <!-- Header -->
+                    <div class="flex justify-between items-center border-b pb-3">
+                        <h2 class="text-xl font-bold text-gray-800">AI Grading Details</h2>
+                        <button id="closeAIModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
+
+                    <!-- Feedback Section -->
+                    <div class="flex-grow overflow-y-auto">
+                        <h4 class="font-semibold mt-4 mb-2">Feedback:</h4>
+                        <p id="ai-feedback" class="text-gray-700"></p>
+
+                        <!-- Scores Section -->
+                        <div class="bg-gray-50 p-4 rounded-lg mt-4">
+                            <p class="font-medium mb-2">Content Knowledge Score: <span id="ai-content-score"></span></p>
+                            <p class="font-medium mb-2">Analysis Score: <span id="ai-analysis-score"></span></p>
+                            <p class="font-medium mb-2">Organization Score: <span id="ai-organization-score"></span></p>
+                            <p class="font-medium mb-2">Plagiarism Percentage: <span id="ai-plagiarism"></span>%</p>
+                            <p class="font-medium">Suggested Grade: <span id="ai-grade"></span></p>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="border-t pt-3 flex justify-end">
+                        <button id="approveAndSend" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            Approve & Send
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
+
 
         <!-- Grading Panel Modal -->
         <div id="gradingModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
@@ -191,7 +221,7 @@
                                 <p><strong>Assignment:</strong> ${submission.assignment}</p>
                                 <p><strong>Content:</strong> ${submission.content.substring(0, 150)}...</p>
                             </div>
-                            <button class="view-button bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" data-id="${submission.id}">
+                            <button class="view-button bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" data-id="${submission.id}" style="margin-top: 15px;">
                                 View AI Grading
                             </button>
                         </div>`).join("")
@@ -206,35 +236,45 @@
                 });
             }   
 
-            function fetchAIDetails(ai_assessments_id) {
-                fetch(`/ai/submissions_view/get-ai-grading/${ai_assessments_id}/`)
+            function fetchAIDetails(submissionId) {
+                console.log("Fetching AI grading details for submission ID:", submissionId);
+                fetch(`/ai/submissions_view/get-ai-grading/${submissionId}/`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.error) {
                             alert("Error fetching AI grading details: " + data.error);
                             return;
                         }
-            
-                        // Populate the modal with AI grading details
-                        const aiGradingContent = document.getElementById("aiGradingContent");
-                        aiGradingContent.innerHTML = `
-                            <h3 class="text-lg font-semibold">Student Name: ${data.student_name}</h3>
-                            <p><strong>Subject:</strong> ${data.subject}</p>
-                            <p><strong>Assignment:</strong> ${data.assignment}</p>
-                            <p><strong>Content Knowledge Score:</strong> ${data.content_knowledge_score}</p>
-                            <p><strong>Analysis Score:</strong> ${data.analysis_score}</p>
-                            <p><strong>Organization Score:</strong> ${data.organization_score}</p>
-                            <p><strong>Plagiarism Percentage:</strong> ${data.plagiarism_percentage}%</p>
-                            <p><strong>Suggested Grade:</strong> ${data.suggested_grade}</p>
-                            <p><strong>Feedback:</strong> ${data.suggested_feedback}</p>
-                        `;
-            
+                
+                        // Populate the modal with AI grading details using the new structure
+                        document.getElementById("ai-student-name").textContent = data.student_name || "Unknown";
+                        document.getElementById("ai-subject").textContent = data.subject || "Unknown";
+                        document.getElementById("ai-assignment").textContent = data.assignment || "Unknown";
+                        document.getElementById("ai-content-score").textContent = data.content_knowledge_score || "N/A";
+                        document.getElementById("ai-analysis-score").textContent = data.analysis_score || "N/A";
+                        document.getElementById("ai-organization-score").textContent = data.organization_score || "N/A";
+                        document.getElementById("ai-plagiarism").textContent = data.plagiarism_percentage || "0";
+                        document.getElementById("ai-grade").textContent = data.suggested_grade || "N/A";
+                        document.getElementById("ai-feedback").textContent = data.suggested_feedback || "No feedback available.";
+                
                         // Show the modal
                         const aiGradingModal = document.getElementById("aiGradingModal");
                         aiGradingModal.classList.remove("hidden");
                     })
                     .catch(error => console.error("Error fetching AI grading details:", error));
             }
+            
+            // Add event listener for the Approve & Send button
+            document.addEventListener("DOMContentLoaded", () => {
+                const approveButton = document.getElementById("approveAndSend");
+                if (approveButton) {
+                    approveButton.addEventListener("click", () => {
+                        alert("Feedback approved and sent to student!");
+                        const aiGradingModal = document.getElementById("aiGradingModal");
+                        aiGradingModal.classList.add("hidden");
+                    });
+                }
+            });
             
             // Close the modal
             document.getElementById("closeAIModal").addEventListener("click", () => {
