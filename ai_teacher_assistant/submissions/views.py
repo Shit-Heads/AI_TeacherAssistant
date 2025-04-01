@@ -203,17 +203,38 @@ def submitted_assignments(request):
             'error': 'Unable to fetch submitted assignments'
         })
 
-@login_required
-def get_submission_details(request, assignment_id):
-    assignment_manager = AssignmentManager()
+from firebase_admin import credentials, firestore
 
+db = firestore.client()
+assignments_ref = db.collection('assignments')
+submissions_ref = db.collection('submissions')
+
+@login_required    
+def get_submissions(request, username):
+    """
+    Fetch submissions for a specific user
+    """
+    # Ensure the user can only access their own submissions
+    if username != request.user.username and not request.user.is_staff:
+        return JsonResponse({"error": "Unauthorized access"}, status=403)
+    
     try:
-        # Fetch submissions for this specific assignment
-        submissions = assignment_manager.get_submission_details(assignment_id)
-
-        return JsonResponse({
-            'submissions': submissions
-        })
+        # Create a Firestore client
+        db = firestore.client()
+        submissions_ref = db.collection('submissions')
+        
+        # Query submissions for this specific user
+        submission_docs = submissions_ref.where('submitted_by', '==', username).stream()
+        
+        # Convert to list of dicts
+        submissions = []
+        for doc in submission_docs:
+            submission_data = doc.to_dict()
+            submission_data['id'] = doc.id  # Add the document ID
+            submissions.append(submission_data)
+        
+        return JsonResponse({"submissions": submissions})
+    
     except Exception as e:
-        print(f"Error fetching submission details: {e}")
-        return JsonResponse({'error': 'Unable to fetch submission details'}, status=500)
+        print(f"Error fetching submissions for {username}: {str(e)}")
+        return JsonResponse({"error": str(e)}, status=400)
