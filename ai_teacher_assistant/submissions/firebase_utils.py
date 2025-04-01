@@ -2,6 +2,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from django.conf import settings
 import os
+from django.http import JsonResponse
 from datetime import datetime
 
 # FIREBASE_TOKEN_PATH = r"D:\Programming Projects\AI_TeacherAssistant\ai_teacher_assistant\bingusfirebase.json"
@@ -243,7 +244,7 @@ class AssignmentManager:
             print(f"Error fetching submitted assignments: {e}")
             return []
 
-    def get_submission_details(self, assignment_id):
+    def get_submission_details(self, assignment_id, username=None):
         """
         Fetch detailed submissions for a specific assignment
         
@@ -253,6 +254,10 @@ class AssignmentManager:
         try:
             # Query submissions for this specific assignment
             query = self.submissions_ref.where('assignment_id', '==', assignment_id)
+
+            if username:
+                query = query.where('submitted_by', '==', username)
+
             submissions = query.stream()
             
             processed_submissions = []
@@ -265,3 +270,13 @@ class AssignmentManager:
         except Exception as e:
             print(f"Error fetching submission details: {e}")
             return []
+    
+    # ✅ Fetch Student Submissions
+    def get_submissions(self, request, username):
+        try:
+            # submissions_ref = db.collection("submissions").stream()
+            sub_ref = self.submissions_ref.where('submitted_by', '==', username)
+            submissions = [{"id": doc.id, **doc.to_dict()} for doc in self.submissions_ref]
+            return JsonResponse({"submissions": submissions}, status=200)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
