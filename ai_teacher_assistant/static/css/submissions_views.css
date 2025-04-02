@@ -46,34 +46,12 @@
 /* Submission item styles */
 .submission-item {
     display: flex;
-    align-items: flex-start;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #eee;
-}
-
-/* Checkbox styling */
-.submission-item input[type="checkbox"] {
-    margin-right: 15px;
-    margin-top: 2px;
-    min-width: 18px;
-    height: 18px;
-}
-
-/* Student info container */
-.student-info {
-    flex: 1;
-}
-
-.student-info h4 {
-    margin: 0 0 5px 0;
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.student-info p {
-    margin: 5px 0;
-    font-size: 14px;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
 }
 
 /* Modal footer (fixed at bottom) */
@@ -84,6 +62,7 @@
     justify-content: flex-end;
     background-color: #f8f9fa;
 }
+
 
 /* Style submit button */
 #submitGrading {
@@ -98,13 +77,4 @@
     background-color: #1e3a8a;
 }
 
-/* Select All checkbox styling */
-#selectAll {
-    margin-right: 8px;
-    width: 18px;
-    height: 18px;
-}
 
-label[for="selectAll"] {
-    font-weight: 500;
-}
