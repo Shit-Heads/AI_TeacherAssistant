@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduAssist AI | Teacher's Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles/dashboard.css' %}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h2>EduAssist<span>AI</span></h2>
+            </div>
+            <ul class="nav-links">
+                <li class="{% if request.path == '/submissions/' %}active{% endif %}"><a href="{% url 'submissions' %}"><i class="fas fa-home "></i> Dashboard</a></li>
+                <li class="{% if request.path == '/submissions/pending/' %}active{% endif %}"><a href="{% url 'pending_submissions' %}"><i class="fas fa-file-alt"></i> Pending Assignments</a></li>
+                <li class="{% if request.path == '/submissions/submitted/' %}active{% endif %}"><a href="{% url 'submitted_assignments' %}"><i class="fas fa-book"></i> Submitted Assignments</a></li>
+            </ul>
+            <div class="user-profile">
+                <div class="avatar">
+                    <img src="https://via.placeholder.com/48" alt="Teacher Profile">
+                </div>
+                <div class="user-info">
+                    <h4>{{username}}</h4>
+                    <p>{{ profile.role|default:"No Role Assigned" }}</p> 
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search assignments">
+                </div>
+                <div class="action-buttons">
+                    <a class="btn btn-outline" href="{% url 'logout' %}"> Logout</a>
+                </div>
+            </header>
+
+            <div class="dashboard">
+                <h1>Welcome back, {{ user.first_name }}!</h1>
+                <p class="subtitle">Here's an overview of your assignments</p>
+
+                <!-- Stats Overview -->
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-icon pending">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>{{ total_pending }}</h3>
+                            <p>Pending Assignments</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon graded">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>{{ total_assignments }}</h3>
+                            <p>Total Assignments</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon feedback">
+                            <i class="fas fa-comment-alt"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>0</h3>
+                            <p>Graded Submissions</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Assignments Section -->
+                <section class="assignments-section">
+                    <div class="section-header">
+                        <h2>Recent Assignments</h2>
+                        <a href="{% url 'pending_submissions' %}" class="btn btn-text">View All <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="assignments-list">
+                        {% for assignment in recent_assignments %}
+                        <div class="assignment-card">
+                            <div class="assignment-info">
+                                <h3>{{ assignment.name }}</h3>
+                                <p>{{ assignment.subject }} • Grade {{ assignment.grade }} • Due {{ assignment.formatted_due_date }}</p>
+                                <div class="progress-container">
+                                    <div class="progress-bar" style="width: 0%"></div>
+                                </div>
+                                <div class="assignment-meta">
+                                    <span><i class="fas fa-book"></i> {{ assignment.subject }}</span>
+                                    <span><i class="fas fa-calendar"></i> {{ assignment.formatted_due_date }}</span>
+                                </div>
+                            </div>
+                            <div class="assignment-actions">
+                                <a href="#" class="btn btn-secondary">View Details</a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p>No recent assignments found.</p>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <!-- Pending Assignments Section -->
+                <section class="pending-assignments-section">
+                    <div class="section-header">
+                        <h2>Pending Assignments</h2>
+                        <a href="{% url 'pending_submissions' %}" class="btn btn-text">View All <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="assignments-list">
+                        {% for assignment in pending_assignments %}
+                        <div class="assignment-card">
+                            <div class="assignment-info">
+                                <h3>{{ assignment.name }}</h3>
+                                <p>{{ assignment.subject }} • Grade {{ assignment.grade }} • Due {{ assignment.formatted_due_date }}</p>
+                                <div class="progress-container">
+                                    <div class="progress-bar" style="width: 0%"></div>
+                                </div>
+                                <div class="assignment-meta">
+                                    <span><i class="fas fa-book"></i> {{ assignment.subject }}</span>
+                                    <span><i class="fas fa-calendar"></i> {{ assignment.formatted_due_date }}</span>
+                                </div>
+                            </div>
+                            <div class="assignment-actions">
+                                <a href="{% url 'pending_submissions' %}" class="btn btn-secondary">View Details</a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p>No pending assignments found.</p>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                {% if error %}
+                <div class="error-message">
+                    <p>{{ error }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</body>
+</html>

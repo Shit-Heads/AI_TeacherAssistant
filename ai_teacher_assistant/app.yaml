@@ -1,0 +1,25 @@
+# service: aiteachassistant
+runtime: python310
+entrypoint: gunicorn ai_teacher_assistant.wsgi
+
+handlers:
+- url: /static
+  static_dir: staticfiles
+
+- url: /.*
+  script: auto
+
+beta_settings:
+  cloud_sql_instances: mydb-instance:asia-south1:ai-teacher-assistant-2
+
+env_variables:
+  DJANGO_SETTINGS_MODULE: "ai_teacher_assistant.settings"
+  INSTANCE_UNIX_SOCKET: /cloudsql/ai-teacher-assistant-2:asia-south1:mydb-instance
+  DB_USER: posty
+  DB_PASS: post@1234
+  DB_NAME: aiteacherauth
+  CLOUD_SQL_USERNAME: posty
+  CLOUD_SQL_PASSWORD: post@1234
+  CLOUD_SQL_DATABASE_NAME: aiteacherauth
+  CLOUD_SQL_CONNECTION_NAME: ai-teacher-assistant-2:asia-south1:mydb-instance
+  GOOGLE_APPLICATION_CREDENTIALS: /total-velocity-451813-s3-59fb6e80382d.json

@@ -8,4 +8,3 @@ urlpatterns = [
     path("submissions_view/upload-submission/", views.upload_submission, name="upload_submission"),
     path('submissions_view/get-ai-grading/<str:submission_id>/', views.get_ai_grading, name='get_ai_grading'),
 ]
- 
