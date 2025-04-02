@@ -67,9 +67,7 @@
                     <div class="border-b">
                         <nav class="-mb-px flex" id="subject-tabs">
                             <a href="#" data-subject="all" class="subject-tab active w-full text-center py-4 font-medium border-b-2 border-blue-500 text-blue-600">All Assignments</a>
-                            <a href="#" data-subject="biology" class="subject-tab w-full text-center py-4 font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">Biology</a>
-                            <a href="#" data-subject="chemistry" class="subject-tab w-full text-center py-4 font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">Chemistry</a>
-                            <a href="#" data-subject="physics" class="subject-tab w-full text-center py-4 font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">Physics</a>
+                            
                         </nav>
                     </div>
 
@@ -282,6 +280,82 @@
                 aiGradingModal.classList.add("hidden");
             });
         </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                // Fetch and render subject tabs when the page loads
+                fetchAndRenderSubjectTabs();
+        
+                // Other existing event listeners
+                document.getElementById("gradeButton").addEventListener("click", uploadJsonFile);
+                fetchSubmissions(); // Load existing submissions when the page loads
+            });
+        
+            // Function to fetch and render subject tabs
+            async function fetchAndRenderSubjectTabs() {
+                const subjectTabs = document.getElementById("subject-tabs");
+        
+                try {
+                    const response = await fetch("/teachdash/get-subjects/");
+                    const data = await response.json();
+        
+                    if (response.ok) {
+                        // Clear existing tabs to prevent duplicates
+                        subjectTabs.innerHTML = "";
+        
+                        // Add "All Assignments" tab
+                        const allTab = document.createElement("a");
+                        allTab.href = "#";
+                        allTab.dataset.subject = "all";
+                        allTab.className = "subject-tab active w-full text-center py-4 font-medium border-b-2 border-blue-500 text-blue-600";
+                        allTab.textContent = "All Assignments";
+                        subjectTabs.appendChild(allTab);
+        
+                        // Add tabs for each subject
+                        data.subjects.forEach(subject => {
+                            const tab = document.createElement("a");
+                            tab.href = "#";
+                            tab.dataset.subject = subject.name; // Use subject name for filtering
+                            tab.className = "subject-tab w-full text-center py-4 font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700";
+                            tab.textContent = subject.name;
+                            subjectTabs.appendChild(tab);
+                        });
+        
+                        // Add event listeners to the tabs for filtering
+                        document.querySelectorAll(".subject-tab").forEach(tab => {
+                            tab.addEventListener("click", (e) => {
+                                e.preventDefault();
+                                const subject = tab.dataset.subject;
+                                filterAssignmentsBySubject(subject);
+        
+                                // Update active tab styling
+                                document.querySelectorAll(".subject-tab").forEach(t => t.classList.remove("active", "border-blue-500", "text-blue-600"));
+                                tab.classList.add("active", "border-blue-500", "text-blue-600");
+                            });
+                        });
+                    } else {
+                        console.error("Failed to fetch subjects:", data.error);
+                    }
+                } catch (error) {
+                    console.error("Error fetching subjects:", error);
+                }
+            }
+        
+            // Function to filter assignments by subject
+            function filterAssignmentsBySubject(subject) {
+                const submissionsContainer = document.getElementById("assignments-content");
+                const allSubmissions = submissionsContainer.querySelectorAll(".submission-card");
+        
+                allSubmissions.forEach(card => {
+                    const cardSubject = card.querySelector("p strong").nextSibling.textContent.trim();
+                    if (subject === "all" || cardSubject === subject) {
+                        card.style.display = "block";
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+            }
+        </script>
+        
 </body>
 </html>
 

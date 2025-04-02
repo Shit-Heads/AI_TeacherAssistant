@@ -260,17 +260,17 @@
             const newAssignmentButton = document.getElementById("new-assignment-btn");
             const cancelAssignmentButton = document.getElementById("cancel-btn");
             const subjectSelect = document.getElementById("assignment-subject");
-    
+
             // Function to fetch and render subject tabs
             async function fetchAndRenderSubjectTabs() {
                 try {
                     const response = await fetch("/teachdash/get-subjects/");
                     const data = await response.json();
-    
+
                     if (response.ok) {
                         // Clear existing tabs to prevent duplicates
                         subjectTabs.innerHTML = "";
-    
+
                         // Add "All Assignments" tab
                         const allTab = document.createElement("a");
                         allTab.href = "#";
@@ -278,7 +278,7 @@
                         allTab.className = "subject-tab active w-full text-center py-4 font-medium border-b-2 border-blue-500 text-blue-600";
                         allTab.textContent = "All Assignments";
                         subjectTabs.appendChild(allTab);
-    
+
                         // Add tabs for each subject
                         data.subjects.forEach(subject => {
                             const tab = document.createElement("a");
@@ -288,7 +288,7 @@
                             tab.textContent = subject.name;
                             subjectTabs.appendChild(tab);
                         });
-    
+
                         // Populate the subject dropdown for assignments
                         subjectSelect.innerHTML = '<option value="">Select a subject</option>';
                         data.subjects.forEach(subject => {
