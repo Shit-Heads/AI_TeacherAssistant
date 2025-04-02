@@ -9,6 +9,7 @@ from google.genai import types
 from difflib import SequenceMatcher  # For plagiarism detection
 import re  # To extract JSON correctly
 from django.conf import settings
+import logging
 
 # Initialize Firebase
 #  Initialize Firestore (Directly using Service Account Key)
@@ -162,11 +163,15 @@ def submissions_view(request):
     """Render the submissions.html template"""
     return render(request, '../static/templates/submissions_view.html')
 
+
+logger = logging.getLogger(__name__)
+
 def get_ai_grading(request, submission_id):
     try:
         # Query Firestore for the AI grading result matching the submission ID
         ai_grading_query = db.collection("ai_assessments").where("submission_id", "==", submission_id).stream()
         ai_grading_results = [doc.to_dict() for doc in ai_grading_query]
+        logger.info(f"Received grading request for {submission_id}")
 
         if ai_grading_results:
             return JsonResponse(ai_grading_results[0], status=200)  # Return the first matching result
