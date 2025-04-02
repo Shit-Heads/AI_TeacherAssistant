@@ -22,15 +22,21 @@
                 <li class="{% if request.path == '/pending/' %}active{% endif %}"><a href="#"><i class="fas fa-file-alt"></i> Pending Assignments</a></li>
                 <li class="{% if request.path == '/submitted/' %}active{% endif %}"><a href="#"><i class="fas fa-book"></i> Submitted Assignments</a></li>
             </ul>
-            <div class="user-profile">
-                <div class="avatar">
-                    <img src="https://via.placeholder.com/48" alt="Teacher Profile">
-                </div>
-                <div class="user-info">
-                    <h4>John Doe</h4>
-                    <p>Student</p>
-                </div>
-            </div>
+            <div class="user-profile"> 
+                <div class="avatar"> 
+                    {% if profile.role == "teacher" %}
+                        <i class="fas fa-chalkboard-teacher" style="font-size:25px;margin-left:5px; margin-top: 10px;"></i>
+                    {% elif profile.role == "student" %}
+                        <i class="fas fa-user-graduate" style="font-size:25px;margin-left:5px; margin-top: 10px;"></i>
+                    {% else %}
+                        <i class="fas fa-user" style="font-size:25px;margin-left:5px; margin-top: 10px;"></i>
+                    {% endif %}
+                </div> 
+                <div class="user-info" > 
+                    <h4>{{username}}</h4> 
+                    <p>{{ profile.role|default:"No Role Assigned"|capfirst }}</p> 
+                </div> 
+            </div> 
         </nav>
 
         <!-- Main Content Area -->

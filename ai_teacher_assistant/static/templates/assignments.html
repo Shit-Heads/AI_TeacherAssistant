@@ -29,15 +29,21 @@
                 <li><a href=""><i class="fas fa-chart-line"></i> Analytics</a></li>
                 <li><a href=""><i class="fas fa-cog"></i> Settings</a></li> -->
             </ul>
-            <div class="user-profile">
-                <div class="avatar">
-                    <img src="https://via.placeholder.com/150" alt="User Avatar">
-                </div>
-                <div class="user-info">
-                    <h4>Ms. Johnson</h4>
-                    <p>Science Teacher</p>
-                </div>
-            </div>
+            <div class="user-profile"> 
+                <div class="avatar"> 
+                    {% if profile.role == "teacher" %}
+                        <i class="fas fa-chalkboard-teacher" style="font-size:25px;margin-left:5px; margin-top: 10px;"></i>
+                    {% elif profile.role == "student" %}
+                        <i class="fas fa-user-graduate" style="font-size:25px;margin-left:5px; margin-top: 10px;"></i>
+                    {% else %}
+                        <i class="fas fa-user" style="font-size:25px;margin-left:5px; margin-top: 10px;"></i>
+                    {% endif %}
+                </div> 
+                <div class="user-info" > 
+                    <h4>{{username}}</h4> 
+                    <p>{{ profile.role|default:"No Role Assigned"|capfirst }}</p> 
+                </div> 
+            </div> 
         </nav>
 
         <!-- Main Content Area -->
@@ -47,6 +53,7 @@
                     <h1 class="text-2xl font-bold">Assignments</h1>
                     <div class="flex items-center space-x-4">
                         <input type="text" placeholder="Search assignments..." class="border rounded-md px-3 py-2 w-64">
+                        <button id="new-subject-btn" class="bg-blue-500 text-white px-4 py-2 rounded-md">+ New Subject</button>
                         <button id="new-assignment-btn" class="bg-blue-500 text-white px-4 py-2 rounded-md">+ New Assignment</button>
                     </div>
                 </div>
@@ -56,11 +63,8 @@
                     <div class="border-b">
                         <nav class="-mb-px flex" id="subject-tabs">
                             <a href="#" data-subject="all" class="subject-tab active w-full text-center py-4 font-medium border-b-2 border-blue-500 text-blue-600">All Assignments</a>
-                            <a href="#" data-subject="biology" class="subject-tab w-full text-center py-4 font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">Biology</a>
-                            <a href="#" data-subject="chemistry" class="subject-tab w-full text-center py-4 font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">Chemistry</a>
-                            <a href="#" data-subject="physics" class="subject-tab w-full text-center py-4 font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700">Physics</a>
                         </nav>
-                    </div>
+                    </div>      
 
                     <!-- Assignments Content -->
                     <div id="assignments-content" class="p-6 mb-10">
@@ -70,6 +74,72 @@
             </div>
         </div>
     </div>
+
+
+
+    <!-- Add Subject Modal -->
+    <div id="new-subject-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+            <form id="new-subject-form" class="max-w-lg mx-auto bg-white shadow-2xl rounded-xl p-8 space-y-6 border border-gray-100">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Add New Subject</h2>
+                    <p class="text-gray-500 text-sm">Fill out the details for the new subject</p>
+                </div>
+
+                <div class="mb-4">
+                    <label for="subject-name" class="block text-sm font-medium text-gray-700 mb-2">Subject Name</label>
+                    <input 
+                        type="text" 
+                        id="subject-name" 
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm py-2 px-3"
+                        placeholder="Enter subject name"
+                        required
+                    >
+                </div>
+
+                <div class="mb-4">
+                    <label for="number-of-students" class="block text-sm font-medium text-gray-700 mb-2">Number of Students</label>
+                    <input 
+                        type="number" 
+                        id="number-of-students" 
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm py-2 px-3"
+                        placeholder="Enter number of students"
+                        required
+                    >
+                </div>
+
+                <div class="mb-4">
+                    <label for="class" class="block text-sm font-medium text-gray-700 mb-2">Class & section (eg., CSE-A)</label>
+                    <input 
+                        type="text" 
+                        id="class" 
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm py-2 px-3"
+                        placeholder="Enter class"
+                        required
+                    >
+                </div>
+
+
+                <div class="flex justify-end space-x-4 pt-4">
+                    <button 
+                        type="button" 
+                        id="cancel-subject-btn" 
+                        class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition duration-300 ease-in-out"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        type="submit" 
+                        class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition duration-300 ease-in-out"
+                    >
+                        Add Subject
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
 
     <!-- New Assignment Modal -->
     <div id="new-assignment-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
@@ -109,10 +179,8 @@
                         required
                     >
                         <option value="">Select a subject</option>
-                        <option value="biology">Biology</option>
-                        <option value="chemistry">Chemistry</option>
-                        <option value="physics">Physics</option>
                     </select>
+                    
                 </div>
 
                 <div class="mb-4">
@@ -135,7 +203,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
-                        Grade
+                        Class & sec
                     </label>
                     <input 
                         type="text" 
@@ -180,50 +248,149 @@
     </div>
 
     <script>
-        async function fetchAndRenderAssignments() {
-            try {
-                const response = await fetch("/teachdash/assignments/get-assignments/");
-                const data = await response.json();
-    
-                if (response.ok) {
-                    const assignmentsContent = document.getElementById("assignments-content");
-                    const assignments = data.assignments;
-    
-                    // Clear the existing content
-                    assignmentsContent.innerHTML = "";
-    
-                    // Render each assignment
-                    assignments.forEach((assignment) => {
-                        const assignmentCard = `
-                            <div class="assignment-card mb-4 p-4 border rounded-lg shadow-md bg-white" data-id="${assignment.id}">
-                                <div class="assignment-details">
-                                    <h3 class="text-lg font-semibold">${assignment.name}</h3>
-                                    <p><strong>Subject:</strong> ${assignment.subject}</p>
-                                    <p><strong>Grade:</strong> ${assignment.grade}</p>
-                                    <p><strong>Due Date:</strong> ${assignment.due_date}</p>
-                                    <p><strong>Question:</strong> ${assignment.question}</p>
-                                </div>
-                            </div>
-                        `;
-                        assignmentsContent.innerHTML += assignmentCard;
-                    });
-                } else {
-                    alert(data.error || "Failed to fetch assignments.");
-                }
-            } catch (error) {
-                console.error("Error fetching assignments:", error);
-            }
-        }
-    
-        document.addEventListener("DOMContentLoaded", () => {
-            const newAssignmentButton = document.getElementById("new-assignment-btn");
+        document.addEventListener("DOMContentLoaded", async () => {
+            const subjectTabs = document.getElementById("subject-tabs");
+            const assignmentsContent = document.getElementById("assignments-content");
+            const newSubjectModal = document.getElementById("new-subject-modal");
+            const newSubjectForm = document.getElementById("new-subject-form");
+            const newSubjectButton = document.getElementById("new-subject-btn");
+            const cancelSubjectButton = document.getElementById("cancel-subject-btn");
             const newAssignmentModal = document.getElementById("new-assignment-modal");
             const newAssignmentForm = document.getElementById("new-assignment-form");
-            const cancelBtn = document.getElementById("cancel-btn");
+            const newAssignmentButton = document.getElementById("new-assignment-btn");
+            const cancelAssignmentButton = document.getElementById("cancel-btn");
+            const subjectSelect = document.getElementById("assignment-subject");
+
+            // Function to fetch and render subject tabs
+            async function fetchAndRenderSubjectTabs() {
+                try {
+                    const response = await fetch("/teachdash/get-subjects/");
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // Clear existing tabs to prevent duplicates
+                        subjectTabs.innerHTML = "";
+
+                        // Add "All Assignments" tab
+                        const allTab = document.createElement("a");
+                        allTab.href = "#";
+                        allTab.dataset.subject = "all";
+                        allTab.className = "subject-tab active w-full text-center py-4 font-medium border-b-2 border-blue-500 text-blue-600";
+                        allTab.textContent = "All Assignments";
+                        subjectTabs.appendChild(allTab);
+
+                        // Add tabs for each subject
+                        data.subjects.forEach(subject => {
+                            const tab = document.createElement("a");
+                            tab.href = "#";
+                            tab.dataset.subject = subject.name; // Use subject name for filtering
+                            tab.className = "subject-tab w-full text-center py-4 font-medium text-gray-500 border-b-2 border-transparent hover:border-gray-300 hover:text-gray-700";
+                            tab.textContent = subject.name;
+                            subjectTabs.appendChild(tab);
+                        });
+
+                        // Populate the subject dropdown for assignments
+                        subjectSelect.innerHTML = '<option value="">Select a subject</option>';
+                        data.subjects.forEach(subject => {
+                            const option = document.createElement("option");
+                            option.value = subject.id;
+                            option.textContent = subject.name;
+                            subjectSelect.appendChild(option);
+                        });
+                    } else {
+                        console.error("Failed to fetch subjects:", data.error);
+                    }
+                } catch (error) {
+                    console.error("Error fetching subjects:", error);
+                }
+            }
     
-            // ✅ Handle New Assignment Form Submission
+            // Function to fetch and render assignments
+            async function fetchAndRenderAssignments(subjectName = "all") {
+                try {
+                    const response = await fetch("/teachdash/assignments/get-assignments/");
+                    const data = await response.json();
+    
+                    if (response.ok) {
+                        const assignments = data.assignments;
+    
+                        // Filter assignments based on the selected subject
+                        const filteredAssignments = subjectName === "all"
+                            ? assignments
+                            : assignments.filter(assignment => assignment.subject === subjectName);
+    
+                        // Clear the existing content
+                        assignmentsContent.innerHTML = "";
+    
+                        // Render filtered assignments
+                        filteredAssignments.forEach((assignment) => {
+                            const assignmentCard = `
+                                <div class="assignment-card mb-4 p-4 border rounded-lg shadow-md bg-white" data-id="${assignment.id}">
+                                    <div class="assignment-details">
+                                        <h3 class="text-lg font-semibold">${assignment.name}</h3>
+                                        <p><strong>Subject:</strong> ${assignment.subject}</p>
+                                        <p><strong>Grade:</strong> ${assignment.grade}</p>
+                                        <p><strong>Due Date:</strong> ${assignment.due_date}</p>
+                                        <p><strong>Question:</strong> ${assignment.question}</p>
+                                    </div>
+                                </div>
+                            `;
+                            assignmentsContent.innerHTML += assignmentCard;
+                        });
+                    } else {
+                        alert(data.error || "Failed to fetch assignments.");
+                    }
+                } catch (error) {
+                    console.error("Error fetching assignments:", error);
+                }
+            }
+    
+            // Handle new subject form submission
+            newSubjectForm.addEventListener("submit", async (event) => {
+                event.preventDefault();
+    
+                const formData = {
+                    subject_name: document.getElementById("subject-name").value,
+                    number_of_students: document.getElementById("number-of-students").value,
+                    class: document.getElementById("class").value,
+                };
+    
+                try {
+                    const response = await fetch("/teachdash/createsub/", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(formData),
+                    });
+    
+                    const result = await response.json();
+                    alert(result.message || result.error);
+    
+                    if (response.ok) {
+                        // Close the modal
+                        newSubjectModal.classList.add("hidden");
+    
+                        // Clear the form
+                        newSubjectForm.reset();
+    
+                        // Refresh the subject tabs
+                        await fetchAndRenderSubjectTabs();
+                    }
+                } catch (error) {
+                    console.error("Error adding subject:", error);
+                }
+            });
+    
+            // Handle new assignment form submission
             newAssignmentForm.addEventListener("submit", async (event) => {
-                event.preventDefault(); // Prevent default form submission
+                event.preventDefault();
+    
+                // Check if subjects are available
+                if (subjectSelect.options.length <= 1) { // Only the default "Select a subject" option exists
+                    alert("No subjects available. Please add a subject first.");
+                    return;
+                }
     
                 const formData = {
                     name: document.getElementById("assignment-name").value,
@@ -246,20 +413,51 @@
                     alert(result.message || result.error);
     
                     if (response.ok) {
-                        fetchAndRenderAssignments(); // Refresh the assignments list
-                        newAssignmentModal.classList.add("hidden"); // Close the modal
+                        // Close the modal
+                        newAssignmentModal.classList.add("hidden");
+    
+                        // Clear the form
+                        newAssignmentForm.reset();
+    
+                        // Refresh the assignments list
+                        await fetchAndRenderAssignments();
                     }
                 } catch (error) {
                     console.error("Error adding assignment:", error);
                 }
             });
     
-            // ✅ Open and Close Modal
-            newAssignmentButton.addEventListener("click", () => newAssignmentModal.classList.remove("hidden"));
-            cancelBtn.addEventListener("click", () => newAssignmentModal.classList.add("hidden"));
+            // Handle tab clicks to filter assignments
+            subjectTabs.addEventListener("click", (event) => {
+                event.preventDefault();
+                const target = event.target;
     
-            // ✅ Fetch assignments on page load
-            fetchAndRenderAssignments();
+                if (target.classList.contains("subject-tab")) {
+                    // Remove active class from all tabs
+                    document.querySelectorAll(".subject-tab").forEach(tab => {
+                        tab.classList.remove("active", "border-blue-500", "text-blue-600");
+                        tab.classList.add("border-transparent", "text-gray-500");
+                    });
+    
+                    // Add active class to the clicked tab
+                    target.classList.add("active", "border-blue-500", "text-blue-600");
+                    target.classList.remove("border-transparent", "text-gray-500");
+    
+                    // Fetch and render assignments for the selected subject
+                    const subjectName = target.dataset.subject;
+                    fetchAndRenderAssignments(subjectName);
+                }
+            });
+    
+            // Open and close modals
+            newSubjectButton.addEventListener("click", () => newSubjectModal.classList.remove("hidden"));
+            cancelSubjectButton.addEventListener("click", () => newSubjectModal.classList.add("hidden"));
+            newAssignmentButton.addEventListener("click", () => newAssignmentModal.classList.remove("hidden"));
+            cancelAssignmentButton.addEventListener("click", () => newAssignmentModal.classList.add("hidden"));
+    
+            // Initial fetch and render
+            await fetchAndRenderSubjectTabs();
+            await fetchAndRenderAssignments();
         });
     </script>
 </body>
