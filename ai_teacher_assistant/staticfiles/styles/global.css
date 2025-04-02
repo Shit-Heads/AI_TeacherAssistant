@@ -1,0 +1,137 @@
+/* Global Reset and Shared Styles */
+:root {
+    --primary-color: #4D70FF;
+    --secondary-color: #6C757D;
+    --background-light: #F4F6F9;
+    --text-dark: #2C3345;
+    --border-color: #E0E4E8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-light);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #3A5CFF;
+}
+
+.btn-secondary {
+    background-color: #E9ECEF;
+    color: var(--text-dark);
+}
+
+.btn-secondary:hover {
+    background-color: #DEE2E6;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-dark);
+}
+
+.btn-outline:hover {
+    background-color: #F8F9FA;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, var(--primary-color), var(--primary-light));
+    padding: 24px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.logo i {
+    font-size: 28px;
+    margin-right: 12px;
+}
+
+.logo h2 {
+    font-weight: 600;
+    font-size: 24px;
+}
+
+.logo span {
+    font-weight: 300;
+}
+
+.nav-links {
+    margin-bottom: auto;
+}
+
+.nav-links li {
+    margin-bottom: 12px;
+    transition: var(--transition);
+    border-radius: 8px;
+}
+
+.nav-links li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.nav-links li.active a,
+.nav-links li a:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.nav-links li i {
+    margin-right: 14px;
+    font-size: 18px;
+}
+
+.user-profile {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+}
