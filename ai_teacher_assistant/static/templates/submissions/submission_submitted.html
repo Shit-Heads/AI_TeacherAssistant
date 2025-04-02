@@ -3,108 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}EduAssist AI | Submitted Assignments{% endblock %}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>EduAssist AI | Teacher's Assistant</title>
     {% load static %}
+    <link rel="stylesheet" href="{% static 'styles/submissions_views.css' %}">
     <link rel="stylesheet" href="{% static 'styles/dashboard.css' %}">
-    <style>
-        /* Reuse styles from submission_pending.html and add any specific styles for submitted assignments */
-        .submitted-assignments-section .assignment-card {
-            background-color: #f0f6ff;
-            border-left: 4px solid #007bff;
-        }
+    <link rel="stylesheet" href="{% static 'styles/assignments.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-        .submission-status {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            font-weight: bold;
-        }
-
-        .submission-status-submitted {
-            background-color: #e6f3e6;
-            color: #28a745;
-        }
-
-        /* Modal Styles */
-        .submission-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.5);
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow-y: auto;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            position: relative;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #888;
-        }
-
-        .submission-details {
-            margin-bottom: 20px;
-        }
-
-        .submission-details h3 {
-            margin-bottom: 10px;
-            color: #333;
-            border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 10px;
-        }
-
-        .submission-details .detail-item {
-            margin-bottom: 15px;
-            background-color: #f9f9f9;
-            padding: 15px;
-            border-radius: 4px;
-        }
-
-        .submission-details .detail-item p {
-            margin: 5px 0;
-        }
-
-        .submission-details .detail-item .question {
-            font-weight: bold;
-            color: #007bff;
-            margin-bottom: 10px;
-        }
-
-        .submission-details .detail-item .answer {
-            color: #333;
-        }
-    </style>
-    {% block extra_head %}{% endblock %}
 </head>
+
 <body>
     <div class="app-container">
         <!-- Sidebar Navigation -->
@@ -118,157 +27,255 @@
                 <li><a href="{% url 'pending_submissions' %}"><i class="fas fa-file-alt"></i> Pending Assignments</a></li>
                 <li class="{% if request.path == '/submissions/submitted/' %}active{% endif %}"><a href="{% url 'submitted_assignments' %}"><i class="fas fa-file-alt"></i> Submitted Assignments</a></li>
             </ul>
-            <div class="user-profile"> 
-                <div class="avatar"> 
-                    <i class="fas fa-user-graduate" style="font-size:25px;margin-left:5px; margin-top: 10px;"></i>
-                </div> 
-                <div class="user-info" > 
-                    <h4>{{username}}</h4> 
-                    <p>{{ profile.role|default:"No Role Assigned"|capfirst }}</p> 
-                </div> 
-            </div> 
+            <div class="user-profile">
+                <div class="avatar">
+                    <img src="https://via.placeholder.com/150" alt="User Avatar">
+                </div>
+                <div class="user-info">
+                    <h4>{{ user.username }}</h4>
+                    <p>Student</p>
+                </div>
+            </div>
         </nav>
 
         <!-- Main Content Area -->
-        <main class="main-content">
-            <header class="top-bar">
-                <div class="search-container">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search submitted assignments">
-                </div>
-                <div class="action-buttons">
-                    <a class="btn btn-outline" href="{% url 'logout' %}"> Logout</a>
-                </div>
-            </header>
+        <div class="main-content">
+            <div class="flex-1 p-6 overflow-y-auto">
+                <div class="flex items-center justify-between mb-6">
+                    <h1 class="text-2xl font-bold">Submissions</h1>
+                    <div class="flex items-center space-x-4">
+                        <input type="text" placeholder="Search assignments..." class="border rounded-md px-3 py-2 w-64">
 
-            <div class="dashboard">
-                <!-- Submitted Assignments Section -->
-                <section class="submitted-assignments-section">
-                    <div class="section-header">
-                        <h2>Submitted Assignments</h2>
-                        <p>Total Submitted: {{ total_submitted }}</p>
+                        <div id="gradeButton"></div>
                     </div>
-                    <div class="assignments-list">
-                        {% for assignment in submitted_assignments %}
-                        <div class="assignment-card" data-assignment-id="{{ assignment.id }}">
-                            <div class="assignment-info">
-                                <h3>{{ assignment.name }}</h3>
-                                <p>{{ assignment.subject }} • Grade {{ assignment.grade }} • Submitted {{ assignment.submitted_at|date:"F d, Y" }}</p>
-                                <div class="assignment-meta">
-                                    <span><i class="fas fa-book"></i> {{ assignment.subject }}</span>
-                                    <span><i class="fas fa-calendar"></i> Due {{ assignment.formatted_due_date }}</span>
-                                    <span class="submission-status submission-status-submitted">
-                                        <i class="fas fa-check-circle"></i> Submitted
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="assignment-actions">
-                                <a href="#" class="btn btn-secondary view-details-btn"
-                                   data-assignment-id="{{ assignment.id }}"
-                                   data-assignment-name="{{ assignment.name }}"
-                                   data-assignment-subject="{{ assignment.subject }}"
-                                   data-assignment-grade="{{ assignment.grade }}"
-                                   data-submitted-date="{{ assignment.submitted_at|date:'F d, Y' }}"
-                                   onclick="openSubmissionDetailsModal(this)">View Details</a>
-                            </div>
-                        </div>
-                        {% empty %}
-                        <p>No submitted assignments found.</p>
-                        {% endfor %}
+                </div>
+
+                <div class="bg-white shadow-md rounded-lg">
+                    <!-- Assignments Content -->
+                    <div id="assignments-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 p-6">
+                        <!-- Assignments will be dynamically populated here -->
                     </div>
-                </section>
-
-                {% if error %}
-                <div class="error-message">
-                    <p>{{ error }}</p>
-                </div>
-                {% endif %}
-            </div>
-        </main>
-    </div>
-
-    <!-- Submission Details Modal -->
-    <div id="submissionDetailsModal" class="submission-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalAssignmentTitle">Submission Details</h2>
-                <button class="modal-close" onclick="closeSubmissionDetailsModal()">&times;</button>
-            </div>
-
-            <div class="submission-details">
-                <div class="detail-item">
-                    <p><strong>Subject:</strong> <span id="modalAssignmentSubject"></span></p>
-                    <p><strong>Grade:</strong> <span id="modalAssignmentGrade"></span></p>
-                    <p><strong>Submitted Date:</strong> <span id="modalSubmittedDate"></span></p>
-                </div>
-
-                <div id="submissionContentContainer">
-                    <!-- Submission content will be dynamically populated here -->
                 </div>
             </div>
         </div>
-    </div>
 
-    <script>
-        // Fetch submissions for the modal
-        async function fetchSubmissionDetails(assignmentId) {
-            try {
-                const response = await fetch(`/get_submission_details/${assignmentId}/`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch submission details');
-                }
-                return await response.json();
-            } catch (error) {
-                console.error('Error:', error);
-                return null;
-            }
-        }
+        <!-- AI Grading Details Modal -->
+        <div id="aiGradingModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-white rounded-lg shadow-lg w-3/4 max-h-[80%] overflow-hidden flex">
+                
+                <!-- Submission Details (Left) -->
+                <div class="w-1/3 bg-gray-100 p-6 border-r">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Submission Details</h2>
+                    <p class="mb-2"><strong>Student:</strong> <span id="ai-student-name"></span></p>
+                    <p class="mb-2"><strong>Subject:</strong> <span id="ai-subject"></span></p>
+                    <p class="mb-4"><strong>Assignment:</strong> <span id="ai-assignment"></span></p>
+                </div>
 
-        // Populate submission details modal
-        async function openSubmissionDetailsModal(button) {
-            const modal = document.getElementById('submissionDetailsModal');
-            const assignmentId = button.getAttribute('data-assignment-id');
-            const assignmentName = button.getAttribute('data-assignment-name');
-            const assignmentSubject = button.getAttribute('data-assignment-subject');
-            const assignmentGrade = button.getAttribute('data-assignment-grade');
-            const submittedDate = button.getAttribute('data-submitted-date');
+                <!-- Grading Details (Right) -->
+                <div class="w-2/3 p-6 flex flex-col">
+                    <!-- Header -->
+                    <div class="flex justify-between items-center border-b pb-3">
+                        <h2 class="text-xl font-bold text-gray-800">AI Grading Details</h2>
+                        <button id="closeAIModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
 
-            // Set basic assignment details in modal
-            document.getElementById('modalAssignmentTitle').textContent = assignmentName;
-            document.getElementById('modalAssignmentSubject').textContent = assignmentSubject;
-            document.getElementById('modalAssignmentGrade').textContent = assignmentGrade;
-            document.getElementById('modalSubmittedDate').textContent = submittedDate;
+                    <!-- Feedback Section -->
+                    <div class="flex-grow overflow-y-auto">
+                        <h4 class="font-semibold mt-4 mb-2">Feedback:</h4>
+                        <p id="ai-feedback" class="text-gray-700"></p>
 
-            // Fetch and populate submission content
-            const submissionDetails = await fetchSubmissionDetails(assignmentId);
-            const contentContainer = document.getElementById('submissionContentContainer');
+                        <!-- Scores Section -->
+                        <div class="bg-gray-50 p-4 rounded-lg mt-4">
+                            <p class="font-medium mb-2">Content Knowledge Score: <span id="ai-content-score"></span></p>
+                            <p class="font-medium mb-2">Analysis Score: <span id="ai-analysis-score"></span></p>
+                            <p class="font-medium mb-2">Organization Score: <span id="ai-organization-score"></span></p>
+                            <p class="font-medium mb-2">Plagiarism Percentage: <span id="ai-plagiarism"></span>%</p>
+                            <p class="font-medium">Suggested Grade: <span id="ai-grade"></span></p>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="border-t pt-3 flex justify-end">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Grading Panel Modal -->
+        <div id="gradingModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-white rounded-lg shadow-lg w-3/4 max-h-[80%] overflow-y-auto">
+                <!-- Modal Header -->
+                <div class="p-4 border-b flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-gray-800">Grade Assignments</h2>
+                    <button id="closeModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-4">
+                    <!-- Select All Checkbox -->
+                    <div class="mb-4 flex items-center">
+                        <input type="checkbox" id="selectAll" class="mr-2 w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        <label for="selectAll" class="font-medium text-gray-700">Select All</label>
+                    </div>
+
+                    <!-- Submissions List -->
+                    <div id="submissionsList" class="space-y-4">
+                        <!-- More submissions will be dynamically added here -->
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="p-4 border-t flex justify-end">
+                    <button id="submitGrading" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+        <script src="{% static 'js/submissions.js' %}"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                document.getElementById("gradeButton").addEventListener("click", uploadJsonFile);
+                fetchSubmissions(); // Load existing submissions when the page loads
+            });
             
-            if (submissionDetails && submissionDetails.submissions) {
-                // Clear previous content
-                contentContainer.innerHTML = '';
-
-                // Populate submissions
-                submissionDetails.submissions.forEach((submission, index) => {
-                    const submissionDiv = document.createElement('div');
-                    submissionDiv.classList.add('detail-item');
-                    submissionDiv.innerHTML = `
-                        <h3>Submission ${index + 1}</h3>
-                        <p class="question">Question: ${submission.assignment || 'N/A'}</p>
-                        <p class="answer">Answer: ${submission.content || 'No answer provided'}</p>
-                    `;
-                    contentContainer.appendChild(submissionDiv);
-                });
-            } else {
-                contentContainer.innerHTML = '<p>No submission details available.</p>';
+            // ✅ Upload JSON file to Firestore
+            function uploadJsonFile() {
+                const fileInput = document.getElementById("jsonFileInput");
+                const file = fileInput.files[0];
+            
+                if (!file) {
+                    alert("Please select a JSON file.");
+                    return;
+                }
+            
+                const formData = new FormData();
+                formData.append("file", file);
+            
+                fetch("/ai/submissions_view/upload-submission/", {
+                    method: "POST",
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error("Upload failed:", data.error);
+                        alert("Error uploading submission: " + data.error);
+                    } else {
+                        console.log("Upload successful:", data);
+                        alert("Submission uploaded successfully!");
+                        fetchSubmissions(); // Refresh submissions list
+                    }
+                })
+                .catch(error => console.error("Error uploading JSON:", error));
             }
+            
+            function fetchSubmissions() {
+                const username = "{{ request.user.username }}";
+                        
+                // Use the full path that matches your urls.py definition
+                fetch(`/submissions/get_submissions/${username}/`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Network response was not ok: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.submissions) {
+                            renderSubmissions(data.submissions);
+                        } else {
+                            console.error("No submissions data returned");
+                            const submissionsContainer = document.getElementById("assignments-content");
+                            if (submissionsContainer) {
+                                submissionsContainer.innerHTML = "<p class='text-gray-500'>No submissions available.</p>";
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error fetching submissions:", error);
+                        const submissionsContainer = document.getElementById("assignments-content");
+                        if (submissionsContainer) {
+                            submissionsContainer.innerHTML = "<p class='text-red-500'>Error loading submissions. Please try again.</p>";
+                        }
+                    });
+            }
+            
+            // ✅ Render submissions in the UI
+            function renderSubmissions(submissions) {
+                const submissionsContainer = document.getElementById("assignments-content");
+                submissionsContainer.innerHTML = submissions.length > 0
+                    ? submissions.map(submission => `
+                        <div class="submission-card p-4 border rounded-lg shadow-md bg-white" data-id="${submission.id}">
+                            <div class="submission-details">
+                                <h3 class="text-lg font-semibold">${submission.student_name}</h3>
+                                <p><strong>Subject:</strong> ${submission.subject}</p>
+                                <p><strong>Class:</strong> ${submission.class}</p>
+                                <p><strong>Assignment:</strong> ${submission.assignment}</p>
+                                <p><strong>Content:</strong> ${submission.content.substring(0, 150)}...</p>
+                            </div>
+                            <button class="view-button bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" data-id="${submission.id}" style="margin-top: 15px;">
+                                View Grade
+                            </button>
+                        </div>`).join("")
+                    : "<p class='text-gray-500'>No submissions available.</p>";
+            
+                // Attach event listeners to "View" buttons
+                document.querySelectorAll(".view-button").forEach(button => {
+                    button.addEventListener("click", (e) => {
+                        const submissionId = e.target.dataset.id;
+                        fetchAIDetails(submissionId);
+                    });
+                });
+            }   
 
-            // Show modal
-            modal.style.display = 'flex';
-        }
-
-        function closeSubmissionDetailsModal() {
-            document.getElementById('submissionDetailsModal').style.display = 'none';
-        }
-    </script>
+            function fetchAIDetails(submissionId) {
+                console.log("Fetching AI grading details for submission ID:", submissionId);
+                fetch(`/ai/submissions_view/get-ai-grading/${submissionId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert("Assignment is not Graded: " + data.error);
+                            return;
+                        }
+                
+                        // Populate the modal with AI grading details using the new structure
+                        document.getElementById("ai-student-name").textContent = data.student_name || "Unknown";
+                        document.getElementById("ai-subject").textContent = data.subject || "Unknown";
+                        document.getElementById("ai-assignment").textContent = data.assignment || "Unknown";
+                        document.getElementById("ai-content-score").textContent = data.content_knowledge_score || "N/A";
+                        document.getElementById("ai-analysis-score").textContent = data.analysis_score || "N/A";
+                        document.getElementById("ai-organization-score").textContent = data.organization_score || "N/A";
+                        document.getElementById("ai-plagiarism").textContent = data.plagiarism_percentage || "0";
+                        document.getElementById("ai-grade").textContent = data.suggested_grade || "N/A";
+                        document.getElementById("ai-feedback").textContent = data.suggested_feedback || "No feedback available.";
+                
+                        // Show the modal
+                        const aiGradingModal = document.getElementById("aiGradingModal");
+                        aiGradingModal.classList.remove("hidden");
+                    })
+                    .catch(error => console.error("Assignment is not Graded:", error));
+            }
+            
+            // Add event listener for the Approve & Send button
+            document.addEventListener("DOMContentLoaded", () => {
+                const approveButton = document.getElementById("approveAndSend");
+                if (approveButton) {
+                    approveButton.addEventListener("click", () => {
+                        alert("Feedback approved and sent to student!");
+                        const aiGradingModal = document.getElementById("aiGradingModal");
+                        aiGradingModal.classList.add("hidden");
+                    });
+                }
+            });
+            
+            // Close the modal
+            document.getElementById("closeAIModal").addEventListener("click", () => {
+                const aiGradingModal = document.getElementById("aiGradingModal");
+                aiGradingModal.classList.add("hidden");
+            });
+        </script>
 </body>
 </html>
+
