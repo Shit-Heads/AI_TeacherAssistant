@@ -18,7 +18,7 @@ db = firestore.client()  # Firestore database instance
 # Initialize the Vertex AI client
 client = genai.Client(
     vertexai=True,
-    project="total-velocity-451813-s3",
+    project="ai-teacher-assistant-2",
     location="us-central1"
 )
 

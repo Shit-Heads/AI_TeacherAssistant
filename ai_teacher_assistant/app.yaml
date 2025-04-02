@@ -22,4 +22,4 @@ env_variables:
   CLOUD_SQL_PASSWORD: post@1234
   CLOUD_SQL_DATABASE_NAME: aiteacherauth
   CLOUD_SQL_CONNECTION_NAME: ai-teacher-assistant-2:asia-south1:mydb-instance
-  GOOGLE_APPLICATION_CREDENTIALS: /total-velocity-451813-s3-59fb6e80382d.json
+  GOOGLE_APPLICATION_CREDENTIALS: cloud_tokens/ai-teacher-assistant-2-7c506bc23f10.json

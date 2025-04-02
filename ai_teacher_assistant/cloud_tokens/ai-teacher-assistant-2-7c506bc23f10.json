@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "ai-teacher-assistant-2",
+  "private_key_id": "7c506bc23f10cef86f00d52285caab73455a269e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCTXulH1Hu3GErj\nhy7sL91WbYCjfN4lCQkJ4vbjB2tJojeS/WuakiuA8zXwrifT/AdXdfzGr9jK/uLX\nE/8F5yv84WHLc1zhmScUPX/NNviPMJ+iJCAjgDMQKLRSFou/W4Rfxa/YWTKaOBVc\nc4bE8X9pRLfTT+E3sO1OxfXf9uvxWiKdZcXC9KSkipGQqpg4nPTUKw8xkTzl5nf+\nr/iK7vvJfHNMw8g/obKLWHMi4YOVnQeFEkvFPqSlYhSdSLRxcB17k4h7tbEksrGM\nAL0JKJDzER+w9k9aoyVN8Dn6lWsr8i9LuL/bjL4a63CZRzx1F/eacR5tY9e+Jl2V\nEMDUpjinAgMBAAECggEAALDG8ZQL9b+K6fFpIVqf43KzH72CyPbyARIo4bwPuvDQ\npe+34dZGHG7gWxa+3UqY5rsv43eqVzds4dAo/+KljJj4MjXl9N20i5BMpJ1kwsSR\nsHxUgE8gpccgnVoHWHnk/+Vc78p0mSh7xPdvhveWYCmuvyyw3P4SamsqFwmnz7gs\n+TPXKQdNRyjcE1rPuPyjwl15nBop/4J/3ny2o8dFWSzofnnI4YcZII/717Njg+81\n7iACX0jGGKEkeXI0IXDtULWVXLNr89VFPYsszp2OIAL18bkj0O2wvvmV21/ZjGys\nb2jRpyG1SiUF3xMuOYpRvgcjasRRNs9QVDf992edEQKBgQDHSlD7u1m+wibOxZ5R\njRVN16pLK6PZf7FK9FM+o0kCsxyj9DnjQQZx7B9DC0pV9xHT2A+cyc3t8iXwSoQd\nkM99uqSNU4g8/gm7UhsIasjmzlKayuZ1es4X3qOp3kv7yInyDFYHheyDvpko7qrD\nj1sotQLSv+98miIgp6rkmrbAnwKBgQC9Tmpslwp1gHw/cWYiz3kctPDbWuS27Ss4\nCK41WEOkjc5OpS6xs2o/IP9dhEdCMOBrJCBjh1V3Xqg2BxpDcndmGchSBGcL4Otp\nGOTelYSPpaIafhOkZFI5kgkkWcknrx6Y4Pjw2H8TKEQ0Fb66VdNMYLENBB7xIFB9\nsEZIA9hi+QKBgQCBl+ELoWwdsPE9eqKWE3FsGjdCBJHa6L9op3LOg64BlGmmcDWI\ngwtm344AsgHX3v93y8NzSIOiHNnw5PP+qeFTuCAzSsOILgY0CpNLqO0Vsctjn1e3\nw3DrcrroxoaQp3qUrNLwt3TywumkBXeEDd/Qm8zHMUrRswVISN/HIph+rwKBgQCy\nRmSm+t7YpTVdMdeztJsj06p3iPOW6WcoD9SvW/3nu7usCJcetg26gcK7ONU6mnjd\nrVnrIQn1rmjO6IVtOyECQAmMY6T/ZMONZ+oxS7FY7ezo8g5hZDCjEsoVN5DeFGbG\nJieJ+PhC/EqumkPRiv3AEdbqoRTak0n588VcEHL5UQKBgQCsJATCiK2OtPf8lm3T\n6t9ybbqpKno6moaS3C4ZNUnN4XP9GRgCbY+er2sA/+kt3T09s+MIIfsBP73PAygZ\nSeaV7ew2esjdKg5wY6ZP+uvzolq8W0QZLZCpWAao/7HBusUi47bvppclTwQqh7H+\n1O/J13chE67SH2UB4PCS/FI/Kw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "ai-teacher-assistant-vertexai@ai-teacher-assistant-2.iam.gserviceaccount.com",
+  "client_id": "106962917460892474000",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ai-teacher-assistant-vertexai%40ai-teacher-assistant-2.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
