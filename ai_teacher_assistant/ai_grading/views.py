@@ -11,11 +11,20 @@ import re  # To extract JSON correctly
 from django.conf import settings
 
 # Initialize Firebase
-cred = credentials.Certificate(settings.FIREBASE_TOKEN)  # Update your path
-firebase_admin.initialize_app(cred)
-db = firestore.client()  # Firestore database instance
+#  Initialize Firestore (Directly using Service Account Key)
+SERVICE_ACCOUNT_PATH = settings.FIREBASE_TOKEN  # Change this to your actual path
 
-# Initialize the Vertex AI client
+# Check if the app is already initialized and delete it if necessary
+if firebase_admin._apps:
+    firebase_admin.delete_app(firebase_admin.get_app())
+
+cred = credentials.Certificate(SERVICE_ACCOUNT_PATH)
+firebase_admin.initialize_app(cred)
+
+
+db = firestore.client()
+
+# Initialize the Vertex AI client 
 client = genai.Client(
     vertexai=True,
     project="total-velocity-451813-s3",
@@ -164,7 +173,7 @@ def get_ai_grading(request, submission_id):
         else:
             return JsonResponse({"error": "AI grading details not found."}, status=404)
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=400)
+        return JsonResponse({"error": str(e)}, status=400) 
 
 # ✅ Fetch Student Submissions
 def get_submissions(request):

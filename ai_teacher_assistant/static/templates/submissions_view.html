@@ -205,7 +205,7 @@
             // ✅ Render submissions in the UI
             function renderSubmissions(submissions) {
                 const submissionsContainer = document.getElementById("assignments-content");
-                submissionsContainer.innerHTML = submissions.length > 0
+                submissionsContainer.innerHTML = submissions.length > 0 
                     ? submissions.map(submission => `
                         <div class="submission-card p-4 border rounded-lg shadow-md bg-white" data-id="${submission.id}">
                             <div class="submission-details">

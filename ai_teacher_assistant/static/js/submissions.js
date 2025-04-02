@@ -48,7 +48,7 @@ function fetchSubmissions() {
 }
 
 // ✅ Render submissions in the UI
-function renderSubmissions(submissions) {
+function renderSubmissions(submissions) { 
     const submissionsContainer = document.getElementById("assignments-content");
     submissionsContainer.innerHTML = submissions.length > 0
         ? submissions.map(submission => `
