@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'ai_teacher_assistant.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '/cloudsql/total-velocity-451813-s3:us-central1:aiteacher',
+        'HOST': '34.30.101.88',
         'NAME': 'django_db',
         'USER': 'aiteacher',
         'PASSWORD': 'gowtham1$',

@@ -13,17 +13,18 @@
 .git
 .gitignore
 
+/env/
+
+# Ignore database files
+*.sqlite3
+
+# Ignore large media files
+media/
+
+# Ignore other unnecessary files
+*.log
+*.tmp
 # Python pycache:
 __pycache__/
 # Ignored by the build system
 /setup.cfg
-
-# Exclude virtual environment
-env/
-venv/
-
-venv/
-__pycache__/
-*.pyc
-node_modules/
-staticfiles/

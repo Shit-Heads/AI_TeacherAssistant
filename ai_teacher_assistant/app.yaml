@@ -1,19 +1,13 @@
-runtime: python39
+service: aiteacherassistant1
+runtime: python310
 entrypoint: gunicorn ai_teacher_assistant.wsgi
-
-instance_class: F4_1G
-
-automatic_scaling:
-  max_instances: 20
-
-env_variables:
-  DJANGO_SECRET_KEY: "django-insecure-*60%gb+3lh5+-mhxttnb+fx2h!ppr=0dxhl#8cqo21bajr*%$b"
-  DEBUG: "False"
-  GOOGLE_CLOUD_PROJECT: "total-velocity-451813-s3"
 
 handlers:
 - url: /static
   static_dir: staticfiles
 
+- url: /.*
+  script: auto
+
 beta_settings:
-  cloud_sql_instances: "total-velocity-451813-s3:us-central1:aiteacher"
+  cloud_sql_instances: total-velocity-451813-s3:us-central1:aiteacher
