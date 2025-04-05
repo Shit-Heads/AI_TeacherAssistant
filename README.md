@@ -51,7 +51,7 @@ ai_teacher_assistant/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/ai-teacher-assistant.git
+git clone https://github.com/Shit-Heads/AI_TeacherAssistant.git
 cd ai-teacher-assistant
 ```
 
