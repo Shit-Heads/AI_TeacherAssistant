@@ -84,7 +84,7 @@ def dashboard(request):
     sub_count=len(submissions)
     graded=db.collection("ai_assessments").get()
     graded_count=len(graded)
-    pending=sub_count-graded_count
+    pending = max(sub_count - graded_count, 0)
 
     time_saved=graded_count*4
 
