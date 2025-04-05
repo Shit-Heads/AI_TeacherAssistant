@@ -80,17 +80,26 @@ def delete_assignment(request, assignment_id):
 
 @login_required
 def dashboard(request):
-    submissions=db.collection("submissions").get()
-    sub_count=len(submissions)
-    graded=db.collection("ai_assessments").get()
-    graded_count=len(graded)
+    submissions = db.collection("submissions").get()
+    sub_count = len(submissions)
+    graded = db.collection("ai_assessments").get()
+    graded_count = len(graded)
     pending = max(sub_count - graded_count, 0)
 
-    time_saved=graded_count*4
+    time_saved = graded_count * 4
 
     assignments = db.collection("assignments").stream()
     assignments_data = [{"id": doc.id, **doc.to_dict()} for doc in assignments]
-    return render(request, '../static/templates/dashboard.html', {"assignments": assignments_data,'pending':pending,'graded':graded_count,'time_saved':time_saved})
+    return render(
+        request,
+        "../static/templates/dashboard.html",
+        {
+            "assignments": assignments_data,
+            "pending": pending,
+            "graded": graded_count,
+            "time_saved": time_saved,
+        },
+    )
 
 @csrf_exempt
 @login_required

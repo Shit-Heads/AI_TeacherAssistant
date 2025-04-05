@@ -120,70 +120,6 @@
                         </div>
                     </div>
                 </section>
-
-                <!-- New Grading Interface 
-                <section class="grading-interface">
-                    <div class="section-header">
-                        <h2>Auto-Grading & Feedback</h2>
-                        <div class="toggle-container">
-                            <span>AI Assist</span>
-                            <label class="switch">
-                                <input type="checkbox" checked>
-                                <span class="slider round"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="grading-container">
-                        <div class="student-submission">
-                            <div class="submission-header">
-                                <h3>Biology: Ecosystem Analysis</h3>
-                                <div class="student-info">
-                                    <img src="/api/placeholder/32/32" alt="Student Photo">
-                                    <div>
-                                        <h4>Emma Thompson</h4>
-                                        <p>Grade 9-B • Submitted 2 hours ago</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="submission-content">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. The ecosystem of the Amazon rainforest consists of several interconnected trophic levels. Primary producers like trees and plants convert sunlight into energy through photosynthesis. This energy flows through primary consumers like insects and small mammals, then to secondary consumers like larger mammals and birds...</p>
-                                <p>The biodiversity of this ecosystem is threatened by human activities such as deforestation and climate change. These activities disrupt the delicate balance between organisms and their environment...</p>
-                            </div>
-                        </div>
-                        <div class="grading-panel">
-                            <div class="ai-feedback">                        
-                                <h3>AI Assessment <span class="ai-badge">AI</span></h3>
-                        
-                                <div id="ai-assessment" class="assessment-display">
-                                    AI-generated grading will be displayed here 
-                                    <div>
-                                        <strong>Content Knowledge Score:</strong> <span id="content-knowledge-score">Waiting for analysis...</span>
-                                    </div>
-                                    <div>
-                                        <strong>Analysis Score:</strong> <span id="analysis-score">Waiting for analysis...</span>
-                                    </div>
-                                    <div>
-                                        <strong>Organization Score:</strong> <span id="organization-score">Waiting for analysis...</span>
-                                    </div>
-                                    <div>
-                                        <strong>Plagiarism Score:</strong> <span id="plagiarism-percentage">Waiting for analysis...</span>
-                                    </div>
-                                    <div>
-                                        <strong>Suggested Grade:</strong> <span id="suggested-grade">Waiting for analysis...</span>
-                                    </div>
-                                    <div>
-                                        <strong>Suggested Feedback:</strong>
-                                        <div id="suggested-feedback">Waiting for analysis...</div>
-                                    </div>
-                                </div>
-                        
-                                <div class="feedback-actions">
-                                    <button class="btn btn-primary" id="approve-send"> Approve & Send</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section> -->
             </div>
             {% endblock %}
 
@@ -192,6 +128,20 @@
     </div>
     <script src="{% static 'js/dashboard.js' %}"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for mobile view on initial load
+            adjustForMobileView();
+            initializeCharts();
+
+            // Dynamically inject the `pending` value from Django into JavaScript
+            const pendingAssignments = {{ pending|safe }}; // Get the `pending` value from Django
+
+            // Show welcome notification with dynamic pending count
+            setTimeout(() => {
+                showNotification(`Welcome back to EduAssist AI! You have ${pendingAssignments} assignments pending review.`);
+            }, 1000);
+        });
+        
         document.getElementById('viewbtn').addEventListener('click', function () {
             const assignmentsList = document.querySelector('.assignments-list');
             assignmentsList.innerHTML = `
