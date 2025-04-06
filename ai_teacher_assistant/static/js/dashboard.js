@@ -311,17 +311,7 @@ function exportReport(type) {
 
 
 // Initialize application when DOM is fully loaded
-document.addEventListener('DOMContentLoaded', function() {
-    // Check for mobile view on initial load
-    adjustForMobileView();
-    
-    initializeCharts();
-    
-    // Show welcome notification after a delay
-    setTimeout(() => {
-        showNotification('Welcome back to EduAssist AI! You have 24 assignments pending review.');
-    }, 1000);
-});
+
 
 //ai_grading
 document.getElementById('upload-button').addEventListener('click', function () {

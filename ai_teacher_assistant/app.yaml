@@ -1,0 +1,13 @@
+service: aiteacherassistant
+runtime: python310
+entrypoint: gunicorn ai_teacher_assistant.wsgi
+
+handlers:
+- url: /static
+  static_dir: staticfiles
+
+- url: /.*
+  script: auto
+
+beta_settings:
+  cloud_sql_instances: total-velocity-451813-s3:us-central1:aiteacher

@@ -54,6 +54,47 @@
     border: 1px solid #ddd;
 }
 
+/* Improve submission item layout */
+#submissionsList > div {
+    display: flex;
+    align-items: flex-start;
+    background: #f9f9f9;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    position: relative;
+}
+
+/* Move checkbox to the right side */
+#submissionsList input[type="checkbox"] {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* Style the submission info container */
+#submissionsList > div > div {
+    flex: 1;
+    padding-right: 40px; /* Create space for the checkbox */
+}
+
+/* Make "Select All" checkbox align properly */
+.modal-header .select-all-container {
+    display: flex;
+    align-items: center;
+}
+
+#selectAll {
+    margin-right: 8px;
+    width: 18px;
+    height: 18px;
+}
+
 /* Modal footer (fixed at bottom) */
 #gradingModal .modal-footer {
     padding: 15px;
@@ -76,5 +117,4 @@
 #submitGrading:hover {
     background-color: #1e3a8a;
 }
-
 

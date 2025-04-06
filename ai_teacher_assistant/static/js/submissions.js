@@ -74,26 +74,41 @@ document.addEventListener("DOMContentLoaded", () => {
     const submitGradingButton = document.getElementById("submitGrading");
 
     // Open modal when "Grade" button is clicked
-    gradeButton.addEventListener("click", () => {
-        fetch("/ai/submissions_view/get-submissions/")
-            .then(response => response.json())
-            .then(data => {
-                if (data.submissions) {
-                    submissionsList.innerHTML = data.submissions.map(submission => `
-                        <div class="flex items-center">
-                            <input type="checkbox" class="submission-checkbox mr-2" data-id="${submission.id}">
-                            <div>
-                                <h3 class="font-semibold">${submission.student_name}</h3>
-                                <p><strong>Subject:</strong> ${submission.subject}</p>
-                                <p><strong>Assignment:</strong> ${submission.assignment}</p>
-                            </div>
+gradeButton.addEventListener("click", () => {
+    fetch("/ai/submissions_view/get-submissions/")
+        .then(response => response.json())
+        .then(data => {
+            if (data.submissions) {
+                submissionsList.innerHTML = data.submissions.map(submission => `
+                    <div class="submission-item">
+                        <div class="submission-info">
+                            <h3 class="font-semibold">${submission.student_name}</h3>
+                            <p><strong>Subject:</strong> ${submission.subject}</p>
+                            <p><strong>Assignment:</strong> ${submission.assignment}</p>
                         </div>
-                    `).join("");
-                    gradingModal.classList.remove("hidden");
-                }
-            })
-            .catch(error => console.error("Error fetching submissions:", error));
-    });
+                        <input type="checkbox" class="submission-checkbox" data-id="${submission.id}">
+                    </div>
+                `).join("");
+                gradingModal.classList.remove("hidden");
+            }
+        })
+        .catch(error => console.error("Error fetching submissions:", error));
+});
+
+// Update the "Select All" checkbox in the header too
+const modalHeader = document.querySelector(".modal-header");
+if (modalHeader && !modalHeader.querySelector(".select-all-container")) {
+    const selectAllLabel = document.querySelector("label[for='selectAll']");
+    const selectAllContainer = document.createElement("div");
+    selectAllContainer.className = "select-all-container";
+    
+    // Move elements into the container if they exist
+    if (selectAllLabel && selectAllCheckbox) {
+        selectAllContainer.appendChild(selectAllCheckbox);
+        selectAllContainer.appendChild(selectAllLabel);
+        modalHeader.appendChild(selectAllContainer);
+    }
+}
 
     // Close modal
     closeModal.addEventListener("click", () => {
@@ -146,4 +161,3 @@ document.addEventListener("DOMContentLoaded", () => {
         }).catch(error => console.error("Error fetching submission data:", error));
     });
 });
-
